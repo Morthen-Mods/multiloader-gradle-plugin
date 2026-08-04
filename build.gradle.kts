@@ -1,7 +1,10 @@
 plugins {
-    kotlin("jvm") version "2.4.0"
-    `maven-publish`
     `java-gradle-plugin`
+    `kotlin-dsl`
+    `maven-publish`
+    `version-catalog`
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.gradle.publishing)
 }
 
 group = "net.morthen.gradle.multiloader"
@@ -23,8 +26,9 @@ dependencies {
     compileOnly(gradleApi())
     compileOnly(gradleKotlinDsl())
 
-    compileOnly("net.neoforged.moddev:net.neoforged.moddev.gradle.plugin:2.0.141")
-    compileOnly("net.fabricmc.fabric-loom:net.fabricmc.fabric-loom.gradle.plugin:1.17.17")
+    implementation(libs.idea.ext)
+    compileOnly(libs.moddevgradle)
+    compileOnly(libs.fabric.loom)
 }
 
 java {
