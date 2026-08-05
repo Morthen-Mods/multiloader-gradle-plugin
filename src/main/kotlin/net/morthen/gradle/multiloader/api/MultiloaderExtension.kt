@@ -23,9 +23,12 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     abstract val neoForgeVersion: Property<String>
     abstract val forgeVersion: Property<String>
 
-    // Additional stuff
-    abstract val generateSources: Property<Boolean>
-    abstract val generateJavadoc: Property<Boolean>
+    // Mod stuff
+    abstract val modId: Property<String>
+    abstract val modName: Property<String>
+    abstract val modAuthor: Property<String>
+    abstract val modLicense: Property<String>
+    abstract val modDescription: Property<String>
 
     init {
         // Minecraft stuff
@@ -34,20 +37,15 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
         commonProject.convention(":common")
         javaVersion.convention(25)
 
-        // Additional stuff
-        generateSources.convention(false)
-        generateJavadoc.convention(false)
+        // Mod stuff
+        modId.convention(factory.gradleProperty("mod_id"))
+        modName.convention(factory.gradleProperty("mod_name"))
+        modAuthor.convention(factory.gradleProperty("mod_author"))
+        modLicense.convention(factory.gradleProperty("mod_license")).orElse("MIT")
+        modDescription.convention(factory.gradleProperty("mod_description")).orElse("")
     }
 
     fun applyMetadataReplacements(pattern: List<String>, properties: Map<String, Any>? = null) {
         processResourcesProperties += pattern to properties;
-    }
-
-    fun generateSources(bool: Boolean) {
-        generateSources.set(bool)
-    }
-
-    fun generateJavadoc(bool: Boolean) {
-        generateJavadoc.set(bool)
     }
 }
