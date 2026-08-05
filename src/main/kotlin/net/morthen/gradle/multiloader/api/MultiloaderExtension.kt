@@ -27,8 +27,11 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     abstract val modVersion: Property<String>
     abstract val modGroup: Property<String>
     abstract val modId: Property<String>
-    abstract val modDisplayName: Property<String>
+    abstract val modName: Property<String>
     abstract val modDescription: Property<String>
+    abstract val modAuthor: Property<String>
+    abstract val modLicense: Property<String>
+
     abstract val modSourcesUrl: Property<String>
     abstract val modIssuesUrl: Property<String>
 
@@ -59,8 +62,11 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
         modVersion.convention(factory.provider { project.version.toString() })
         modGroup.convention(factory.provider { project.group.toString() })
         modId.convention(factory.gradleProperty("mod_id"))
-        modDisplayName.convention(factory.gradleProperty("mod_display_name").orElse(factory.provider { project.displayName }))
+        modName.convention(factory.gradleProperty("mod_name"))
         modDescription.convention(factory.gradleProperty("mod_description").orElse(""))
+        modAuthor.convention(factory.gradleProperty("mod_author"))
+        modLicense.convention(factory.gradleProperty("mod_license"))
+
         modSourcesUrl.convention(factory.gradleProperty("sources_url").orElse(""))
         modIssuesUrl.convention(factory.gradleProperty("issues_url").orElse(""))
 

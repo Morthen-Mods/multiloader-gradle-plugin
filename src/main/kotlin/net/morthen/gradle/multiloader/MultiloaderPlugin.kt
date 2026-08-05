@@ -191,8 +191,11 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                         "version" to ext.modVersion.get(),
                         "maven_group_id" to ext.modGroup.get(),
                         "mod_id" to ext.modId.get(),
-                        "mod_display_name" to ext.modDisplayName.orElse(ext.modId).get(),
+                        "mod_name" to ext.modName.orElse(ext.modId).get(),
                         "mod_description" to ext.modDescription.get(),
+                        "mod_author" to ext.modAuthor.get(),
+                        "mod_license" to ext.modLicense.get(),
+
                         "sources_url" to ext.modSourcesUrl.get(),
                         "issues_url" to ext.modIssuesUrl.get(),
 
