@@ -1,146 +1,25 @@
-@file:Suppress("UnstableApiUsage")
-
 package net.morthen.gradle.multiloader.plugins
 
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
-import net.morthen.gradle.multiloader.mcTransformer
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.get
-import org.gradle.kotlin.dsl.the
-import org.slf4j.event.Level
-import java.util.*
 
 object ModDevGradle {
     const val PLUGIN_ID = "net.neoforged.moddev"
 }
 
-fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
-    val localRuntime = configurations.dependencyScope("localRuntime")
-    configurations.named("runtimeClasspath").configure { extendsFrom(localRuntime) }
-
+fun applyCommonModDevGradle(target: Project, ext: MultiloaderExtension) = with(target) {
+    pluginManager.apply(ModDevGradle.PLUGIN_ID)
     extensions.configure<NeoForgeExtension> {
-        validateAccessTransformers = true
-
-        val java = the<JavaPluginExtension>()
-        val metaInf = java.sourceSets["main"].resources.sourceDirectories.files
-            .flatMap { it.listFiles()?.toList() ?: listOf() }
-            .filter { it.name == "META-INF" }
-            .flatMap { it.listFiles()?.toList() ?: listOf() }
-
-        metaInf.find { it.name == "accesstransformer.cfg" }
-            ?.let { atFile ->
-                accessTransformers {
-                    from(atFile)
-                    publish(atFile)
-                }
-            }
-
-        metaInf.find { it.name == "interfaces.json" }
-            ?.let { interfacesFile ->
-                interfaceInjectionData {
-                    from(interfacesFile)
-                    publish(interfacesFile)
-                }
-            }
-
-        afterEvaluate {
-            addModdingDependenciesTo(the<JavaPluginExtension>().sourceSets["test"])
-
-            if(ext.applySharedAccessTransforms.get()) {
-                repositories.mcTransformer()
-                dependencies {
-                    "accessTransformers"("net.ashwork.mc:transformers:${ext.minecraftVersion.get()}.+")
-                }
-            }
-
-            if(ext.loader.get() == "neoforge") {
-                unitTest {
-                    enable()
-
-                    testedMod = mods[ext.modId.get()]
-                    loadedMods = listOf(mods[ext.modId.get()])
-                }
-
-                runs {
-                    register("client") {
-                        client()
-                        gameDirectory = ext.runDir("client")
-                        systemProperty("neoforge.enabledGameTestNamespaces", ext.modId.get())
-
-                        sourceSet = java.sourceSets["main"]
-                        loadedMods = listOf(mods[ext.modId.get()])
-                    }
-
-                    register("server") {
-                        server()
-                        gameDirectory = ext.runDir("server")
-                        systemProperty("neoforge.enabledGameTestNamespaces", ext.modId.get())
-
-                        sourceSet = java.sourceSets["main"]
-                        loadedMods = listOf(mods[ext.modId.get()])
-
-                        programArgument("--nogui")
-                    }
-
-                    ext.testmodConfig?.let { testmod ->
-                        register("testmodClient") {
-                            client()
-                            gameDirectory = ext.runDir("testmod_client")
-                            systemProperty("neoforge.enabledGameTestNamespaces", testmod.modId.get())
-
-                            sourceSet = testmod.sourceSetName.map { java.sourceSets[it] }
-                            loadedMods = listOf(mods[ext.modId.get()], mods[testmod.modId.get()])
-                        }
-
-                        register("testmodServer") {
-                            server()
-                            gameDirectory = ext.runDir("testmod_server")
-                            systemProperty("neoforge.enabledGameTestNamespaces", testmod.modId.get())
-
-                            sourceSet = testmod.sourceSetName.map { java.sourceSets[it] }
-                            loadedMods = listOf(mods[ext.modId.get()], mods[testmod.modId.get()])
-
-                            programArgument("--nogui")
-                        }
-                    }
-
-                    configureEach {
-                        systemProperty("terminal.ansi", "true")
-
-                        systemProperty("mixin.debug", ext.mixinDebugRuns.map { it.toString() }.get())
-                        if(ext.loaderDebugRuns.get()) {
-                            logLevel = Level.DEBUG
-                            systemProperty("forge.logging.markers", "REGISTRIES")
-                        }
-
-                        ideName = "NeoForge ${name.replaceFirstChar { it.titlecase(Locale.ROOT) }}"
-                    }
-                }
-            }
-        }
+        neoFormVersion = ext.neoFormVersion.get()
     }
 }
 
-fun applyMDGCommonProject(current: Project, commonProject: String) = with(current) {
-    val metaInf = project(commonProject).the(JavaPluginExtension::class).sourceSets["main"].resources.sourceDirectories.files
-        .flatMap { it.listFiles()?.toList() ?: listOf() }
-        .filter { it.name == "META-INF" }
-        .flatMap { it.listFiles()?.toList() ?: listOf() }
+fun applyModDevGradle(target: Project, ext: MultiloaderExtension) = with(target) {
+    pluginManager.apply(ModDevGradle.PLUGIN_ID)
 
-    if(metaInf.any { it.name == "accesstransformer.cfg" }) {
-        dependencies {
-            "accessTransformers"(project(commonProject))
-        }
-    }
-
-    if(metaInf.any { it.name == "interfaces.json" }) {
-        dependencies {
-            "interfaceInjectionData"(project(commonProject))
-        }
+    extensions.configure<NeoForgeExtension> {
+        version = ext.neoForgeVersion.get()
     }
 }

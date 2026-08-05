@@ -1,132 +1,53 @@
 package net.morthen.gradle.multiloader.api
 
-import net.morthen.gradle.multiloader.applyCommonProjectDependency
-import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
-import org.gradle.api.publish.PublishingExtension
-import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.SourceSet
-import org.gradle.kotlin.dsl.*
-import java.io.File
 import javax.inject.Inject
 
 @Suppress("unused")
 abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory, val project: Project) {
 
-    abstract val javaVersion: Property<Int>
-    abstract val minecraftVersion: Property<String>
+    internal var processResourcesProperties: List<Pair<List<String>, Map<String, Any>?>> = mutableListOf()
 
+    // Minecraft stuff
+    abstract val loader: Property<String>
+    abstract val minecraftVersion: Property<String>
+    abstract val commonProject: Property<String>
+    abstract val javaVersion: Property<Int>
+
+    // Api stuff
+    abstract val neoFormVersion: Property<String>
+    abstract val fabricLoaderVersion: Property<String>
+    abstract val fabricApiVersion: Property<String>
+    abstract val neoForgeVersion: Property<String>
+    abstract val forgeVersion: Property<String>
+
+    // Additional stuff
     abstract val generateSources: Property<Boolean>
     abstract val generateJavadoc: Property<Boolean>
 
-    // mod properties
-    abstract val modVersion: Property<String>
-    abstract val modGroup: Property<String>
-    abstract val modId: Property<String>
-    abstract val modName: Property<String>
-    abstract val modDescription: Property<String>
-    abstract val modAuthor: Property<String>
-    abstract val modLicense: Property<String>
-
-    abstract val modSourcesUrl: Property<String>
-    abstract val modIssuesUrl: Property<String>
-
-    abstract val curseforgeId: Property<Any>
-    abstract val modrinthId: Property<Any>
-
-    abstract val loader: Property<String>
-
-    abstract val applySharedAccessTransforms: Property<Boolean>
-
-    // run configurations
-    abstract val commonRunDirectory: Property<Boolean>
-
-    abstract val debugRuns: Property<Boolean>
-    abstract val mixinDebugRuns: Property<Boolean>
-    abstract val loaderDebugRuns: Property<Boolean>
-
-    internal var testmodConfig: TestmodConfiguration? = null
-
-    internal var processResourcesProperties: List<Pair<List<String>, Map<String, Any>?>> = mutableListOf()
-
     init {
+        // Minecraft stuff
+        loader.convention("common")
+        minecraftVersion.convention(factory.gradleProperty("minecraft_version"))
+        commonProject.convention(":common")
         javaVersion.convention(25)
 
-        generateSources.convention(factory.gradleProperty("dev.upcraft.gradle.multiloader.generate_sources").map { it.toBoolean() }.orElse(true))
-        generateJavadoc.convention(factory.gradleProperty("dev.upcraft.gradle.multiloader.generate_javadoc").map { it.toBoolean() }.orElse(false))
-
-        modVersion.convention(factory.provider { project.version.toString() })
-        modGroup.convention(factory.provider { project.group.toString() })
-        modId.convention(factory.gradleProperty("mod_id"))
-        modName.convention(factory.gradleProperty("mod_name"))
-        modDescription.convention(factory.gradleProperty("mod_description").orElse(""))
-        modAuthor.convention(factory.gradleProperty("mod_author"))
-        modLicense.convention(factory.gradleProperty("mod_license"))
-
-        modSourcesUrl.convention(factory.gradleProperty("sources_url").orElse(""))
-        modIssuesUrl.convention(factory.gradleProperty("issues_url").orElse(""))
-
-        curseforgeId.convention(factory.gradleProperty("curseforge_id").orElse(""))
-        modrinthId.convention(factory.gradleProperty("modrinth_id").orElse(""))
-
-        loader.convention("common")
-        applySharedAccessTransforms.convention(loader.map { it == "common" })
-
-        commonRunDirectory.convention(false)
-
-        debugRuns.convention(true)
-        mixinDebugRuns.convention(debugRuns)
-        loaderDebugRuns.convention(false)
+        // Additional stuff
+        generateSources.convention(false)
+        generateJavadoc.convention(false)
     }
 
-    fun withTestmod(config: Action<TestmodConfiguration>? = null): Provider<SourceSet> = with(project) {
-        val cfg = objects.newInstance(TestmodConfiguration::class, this@MultiloaderExtension)
-        config?.execute(cfg)
-        testmodConfig = cfg
-
-        val javaPlugin = the(JavaPluginExtension::class)
-        val testMod = javaPlugin.sourceSets.register(cfg.sourceSetName.get()) {
-            compileClasspath += javaPlugin.sourceSets["main"].compileClasspath
-            runtimeClasspath += javaPlugin.sourceSets["main"].runtimeClasspath
-        }
-
-        testMod.configure {
-            javaPlugin.registerFeature("testmod") {
-                usingSourceSet(this@configure)
-            }
-            dependencies {
-                implementationConfigurationName(javaPlugin.sourceSets["main"].output)
-            }
-        }
-
-        afterEvaluate {
-            val publishing = the(PublishingExtension::class)
-
-            testMod.configure {
-                publishing.publications {
-                    withType<MavenPublication>().configureEach {
-                        suppressPomMetadataWarningsFor(apiElementsConfigurationName)
-                        suppressPomMetadataWarningsFor(runtimeElementsConfigurationName)
-                    }
-                }
-            }
-        }
-
-        return testMod
+    fun applyMetadataReplacements(pattern: List<String>, properties: Map<String, Any>? = null) {
+        processResourcesProperties += pattern to properties;
     }
 
-    fun applyMetadataReplacements(patterns: List<String>, extraProperties: Map<String, Any>? = null) {
-        processResourcesProperties += patterns to extraProperties
+    fun generateSources(bool: Boolean) {
+        generateSources.set(bool)
     }
 
-    fun setCommonProject(projectPath: String) = applyCommonProjectDependency(project, projectPath)
-
-    fun runDir(name: String): File {
-        val baseDir = if (commonRunDirectory.get()) "../common" else project.projectDir
-        return File("${baseDir}/run/$name")
+    fun generateJavadoc(bool: Boolean) {
+        generateJavadoc.set(bool)
     }
 }

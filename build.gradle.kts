@@ -7,9 +7,6 @@ plugins {
     alias(libs.plugins.gradle.publishing)
 }
 
-group = "net.morthen.gradle.multiloader"
-version = "0.0.1"
-
 repositories {
     mavenCentral()
     gradlePluginPortal()
@@ -20,6 +17,9 @@ repositories {
     maven("https://maven.fabricmc.net") {
         name = "FabricMC"
     }
+    maven("https://maven.minecraftforge.net") {
+        name = "MinecraftForge"
+    }
 }
 
 dependencies {
@@ -29,6 +29,7 @@ dependencies {
     implementation(libs.idea.ext)
     compileOnly(libs.moddevgradle)
     compileOnly(libs.fabric.loom)
+    compileOnly(libs.forge.gradle)
 }
 
 java {
@@ -51,7 +52,7 @@ gradlePlugin {
         id = "net.morthen.gradle.multiloader"
         implementationClass = "net.morthen.gradle.multiloader.MultiloaderPlugin"
         displayName = "Minecraft Multiloader Plugin"
-        description = "Common Configuration plugin for Minecraft Multiloader Mods, based on the works of UpCrafts Plugin."
+        description = "Common Configuration plugin for Minecraft Multiloader Mods, inspired by the work of UpCraft"
         tags.addAll("minecraft", "multiloader", "mods")
     }
 }
