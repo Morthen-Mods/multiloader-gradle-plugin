@@ -27,11 +27,12 @@ fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
         validateAccessTransformers = true
 
         val java = the<JavaPluginExtension>()
-        java.sourceSets["main"].resources.sourceDirectories.files
+        val metaInf = java.sourceSets["main"].resources.sourceDirectories.files
             .flatMap { it.listFiles()?.toList() ?: listOf() }
             .filter { it.name == "META-INF" }
             .flatMap { it.listFiles()?.toList() ?: listOf() }
-            .find { it.name == "accesstransformer.cfg" }
+
+        metaInf.find { it.name == "accesstransformer.cfg" }
             ?.let { atFile ->
                 accessTransformers {
                     from(atFile)
@@ -39,11 +40,7 @@ fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
                 }
             }
 
-        java.sourceSets["main"].resources.sourceDirectories.files
-            .flatMap { it.listFiles()?.toList() ?: listOf() }
-            .filter { it.name == "META-INF" }
-            .flatMap { it.listFiles()?.toList() ?: listOf() }
-            .find { it.name == "interfaces.json" }
+        metaInf.find { it.name == "interfaces.json" }
             ?.let { interfacesFile ->
                 interfaceInjectionData {
                     from(interfacesFile)
@@ -61,7 +58,7 @@ fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
                 }
             }
 
-            if(ext.loader.get() != "common") {
+            if(ext.loader.get() == "neoforge") {
                 unitTest {
                     enable()
 
@@ -115,7 +112,6 @@ fun applyMDG(target: Project, ext: MultiloaderExtension) = with(target) {
                     configureEach {
                         systemProperty("terminal.ansi", "true")
 
-                        systemProperty("sparkweave.debug", ext.debugRuns.map { it.toString() }.get())
                         systemProperty("mixin.debug", ext.mixinDebugRuns.map { it.toString() }.get())
                         if(ext.loaderDebugRuns.get()) {
                             logLevel = Level.DEBUG
