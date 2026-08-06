@@ -3,6 +3,7 @@ package net.morthen.gradle.multiloader.api
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.dependencies
@@ -34,6 +35,7 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     abstract val fabricApiVersion: Property<String>
     abstract val neoForgeVersion: Property<String>
     abstract val forgeVersion: Property<String>
+    abstract val forgeMixins: ListProperty<String>
 
     // Mod stuff
     abstract val modId: Property<String>
@@ -50,6 +52,9 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
         // Minecraft stuff
         loader.convention("common")
         minecraftVersion.convention(factory.gradleProperty("minecraft_version"))
+
+        // Api stuff
+        forgeMixins.convention(emptyList())
 
         // Mod stuff
         modId.convention(factory.gradleProperty("mod_id"))
