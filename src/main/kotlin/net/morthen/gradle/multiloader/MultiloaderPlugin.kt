@@ -3,6 +3,7 @@
 package net.morthen.gradle.multiloader
 
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
+import net.morthen.gradle.multiloader.misc.applyDefaultRepositories
 import net.morthen.gradle.multiloader.misc.applyLoaderSettings
 import net.morthen.gradle.multiloader.misc.applyMcGradleConventions
 import net.morthen.gradle.multiloader.plugins.*
@@ -25,8 +26,11 @@ abstract class MultiloaderPlugin : Plugin<Project> {
         pluginManager.apply("java-library")
         pluginManager.apply("maven-publish")
 
+        applyDefaultRepositories()
+
         val ext = extensions.create<MultiloaderExtension>("multiloader")
         val javaExt = the<JavaPluginExtension>()
+
         javaExt.toolchain.languageVersion.set(JavaLanguageVersion.of(ext.javaVersion.get()))
         javaExt.withJavadocJar()
         javaExt.withSourcesJar()
