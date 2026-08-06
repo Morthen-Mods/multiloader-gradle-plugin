@@ -1,15 +1,11 @@
 package net.morthen.gradle.multiloader.plugins
 
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
-import net.fabricmc.loom.api.fabricapi.FabricApiExtension
 import net.fabricmc.loom.task.LoomTasks
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.assign
-import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.the
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.kotlin.dsl.*
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.gradle.ext.Gradle
 import org.jetbrains.gradle.ext.runConfigurations
@@ -26,7 +22,6 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
     rootProject.pluginManager.apply("org.jetbrains.gradle.plugin.idea-ext")
 
     val loom = the<LoomGradleExtensionAPI>()
-    val fapi = the<FabricApiExtension>()
 
     dependencies {
         "minecraft"("com.mojang:minecraft:${ ext.minecraftVersion.get() }")
@@ -36,31 +31,47 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
         "implementation"("com.terraformersmc:modmenu:18.0.0")
     }
 
+    loom.accessWidenerPath.convention(provider {
+        the(JavaPluginExtension::class).sourceSets["main"].resources.sourceDirectories.files
+            .flatMap { it.listFiles()?.toList() ?: listOf() }
+            .firstOrNull { it.name == "${ ext.modId.get() }.classtweaker" }
+    }.map { layout.projectDirectory.file(it.absolutePath) })
+
     loom.runConfigs {
         named("client") {
             client()
-            displayName = "Fabric Client"
-            runDirectory = ext.runDir("client")
+            displayName.set("Fabric Client")
+            runDirectory.set(ext.runDir("client"))
         }
 
         named("server") {
             server()
-            displayName = "Fabric Server"
-            runDirectory = ext.runDir("server")
+            displayName.set("Fabric Server")
+            runDirectory.set(ext.runDir("server"))
         }
 
         ext.testmodConfig?.let {
             create("testmodClient") {
                 client()
-                displayName = "Fabric Test Client"
-                runDirectory = ext.runDir("client")
-                sourceSet = it.sourceSetName
+                displayName.set("Fabric Test Client")
+                runDirectory.set(ext.runDir("client"))
+                sourceSet.set(it.sourceSetName)
             }
             create("testmodServer") {
-                client()
-                displayName = "Fabric Test Server"
-                runDirectory = ext.runDir("client")
-                sourceSet = it.sourceSetName
+                server()
+                displayName.set("Fabric Test Server")
+                runDirectory.set(ext.runDir("server"))
+                sourceSet.set(it.sourceSetName)
+            }
+        }
+
+        ext.gametestModConfig?.let {
+            create("gameTests") {
+                server()
+                systemProperties.put("fabric-api.gametest", "")
+                displayName.set("Fabric Gametest Server")
+                runDirectory.set(ext.runDir("server"))
+                sourceSet.set(it.sourceSetName)
             }
         }
     }
@@ -68,7 +79,7 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
     loom.runConfigs.configureEach {
         systemProperties.put("fabric-tag-conventions-v2.missingTagTranslationWarning", "VERBOSE")
 
-        generateRunConfig = false
+        generateRunConfig.set(false)
         rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>(displayName.get()) {
             taskNames = listOf(LoomTasks.getRunConfigTaskName(this@configureEach))
             setProject(project)
@@ -85,11 +96,11 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
                 sourceSet(it.sourceSetName.get())
             }
         }
-    }
 
-//    fapi.configureTests {
-//        createSourceSet = false
-//        modId = "${ ext.modId.get() }_gametest"
-//        eula = true
-//    }
+        ext.gametestModConfig?.let {
+            create(it.modId.get()) {
+                sourceSet(it.sourceSetName.get())
+            }
+        }
+    }
 }

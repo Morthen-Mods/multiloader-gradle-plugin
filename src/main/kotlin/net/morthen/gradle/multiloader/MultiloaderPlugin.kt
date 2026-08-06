@@ -15,8 +15,11 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.javadoc.Javadoc
+import org.gradle.external.javadoc.StandardJavadocDocletOptions
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.withType
 import org.gradle.language.jvm.tasks.ProcessResources
 
 @Suppress("unused")
@@ -32,7 +35,6 @@ abstract class MultiloaderPlugin : Plugin<Project> {
         val javaExt = the<JavaPluginExtension>()
 
         javaExt.toolchain.languageVersion.set(JavaLanguageVersion.of(ext.javaVersion.get()))
-        javaExt.withJavadocJar()
         javaExt.withSourcesJar()
 
         tasks.withType<JavaCompile>().configureEach {
@@ -60,6 +62,14 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                 "-Xlint:${xlint.joinToString(",")}",
                 "-Xpkginfo:nonempty", // only emit package-info.class if it contains class or runtime scope annotations
             ))
+        }
+
+        tasks.withType<Javadoc>().configureEach {
+            (options as StandardJavadocDocletOptions).tags(listOf("reason", "implNote"))
+        }
+
+        tasks.withType<ProcessResources>().configureEach {
+            filteringCharset = "UTF-8"
         }
 
         the<PublishingExtension>().apply {
