@@ -3,6 +3,7 @@ package net.morthen.gradle.multiloader.api
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
+import java.io.File
 import javax.inject.Inject
 
 @Suppress("unused")
@@ -10,11 +11,13 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
 
     internal var processResourcesProperties: List<Pair<List<String>, Map<String, Any>?>> = mutableListOf()
 
+    // Basic stuff
+    abstract val javaVersion: Property<Int>
+    abstract val commonRunDirectory: Property<Boolean>
+
     // Minecraft stuff
     abstract val loader: Property<String>
     abstract val minecraftVersion: Property<String>
-    abstract val commonProject: Property<String>
-    abstract val javaVersion: Property<Int>
 
     // Api stuff
     abstract val neoFormVersion: Property<String>
@@ -31,11 +34,13 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     abstract val modDescription: Property<String>
 
     init {
+        // Basic stuff
+        javaVersion.convention(25)
+        commonRunDirectory.convention(true)
+
         // Minecraft stuff
         loader.convention("common")
         minecraftVersion.convention(factory.gradleProperty("minecraft_version"))
-        commonProject.convention(":common")
-        javaVersion.convention(25)
 
         // Mod stuff
         modId.convention(factory.gradleProperty("mod_id"))
@@ -47,5 +52,10 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
 
     fun applyMetadataReplacements(pattern: List<String>, properties: Map<String, Any>? = null) {
         processResourcesProperties += pattern to properties;
+    }
+
+    fun runDir(name: String): File {
+        val baseDir = if (commonRunDirectory.get()) "../common" else project.projectDir
+        return File("${baseDir}/runs/${name}")
     }
 }

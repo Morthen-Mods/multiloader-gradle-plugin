@@ -89,19 +89,19 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                 }
                 "datagen" -> {
                     applyDatagenModDevGradle(this@with, ext)
-                    applyLoaderSettings(this@with, ext.commonProject.get())
+                    applyLoaderSettings(this@with)
                 }
                 "fabric" -> {
                     applyFabricLoom(this@with, ext)
-                    applyLoaderSettings(this@with, ext.commonProject.get())
+                    applyLoaderSettings(this@with)
                 }
                 "forge" -> {
                     applyForgeGradle(this@with, ext)
-                    applyLoaderSettings(this@with, ext.commonProject.get())
+                    applyLoaderSettings(this@with)
                 }
                 "neoforge" -> {
                     applyModDevGradle(this@with, ext)
-                    applyLoaderSettings(this@with, ext.commonProject.get())
+                    applyLoaderSettings(this@with)
                 }
                 else -> throw GradleException("Unsupported multiloader.loader '$loader', expected one of: common, datagen, fabric, forge, neoforge")
             }

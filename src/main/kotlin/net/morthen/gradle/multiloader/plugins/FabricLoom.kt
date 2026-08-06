@@ -3,11 +3,8 @@ package net.morthen.gradle.multiloader.plugins
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
 import org.gradle.api.Project
-import org.gradle.api.provider.Provider
-import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.the
-import org.gradle.language.jvm.tasks.ProcessResources
 
 object FabricLoom {
     const val PLUGIN_ID = "net.fabricmc.fabric-loom"
