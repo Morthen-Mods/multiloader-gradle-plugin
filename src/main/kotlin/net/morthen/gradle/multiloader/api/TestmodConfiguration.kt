@@ -7,8 +7,14 @@ abstract class TestmodConfiguration @Inject constructor(ext: MultiloaderExtensio
     abstract val modId: Property<String>
     abstract val sourceSetName: Property<String>
 
+    abstract val serverRun: Property<Boolean>
+    abstract val clientRun: Property<Boolean>
+
     init {
         modId.convention(ext.modId.map { "${ it }_testmod" })
         sourceSetName.convention("testmod")
+
+        serverRun.convention(true)
+        clientRun.convention(true)
     }
 }

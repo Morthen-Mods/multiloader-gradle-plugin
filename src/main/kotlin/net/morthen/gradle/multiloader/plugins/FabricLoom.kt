@@ -52,17 +52,22 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
         }
 
         ext.testmodConfig?.let {
-            create("testmodClient") {
-                client()
-                displayName.set("Fabric Test Client")
-                runDirectory.set(ext.runDir("client"))
-                sourceSet.set(it.sourceSetName)
+            if (it.clientRun.get()) {
+                create("testmodClient") {
+                    client()
+                    displayName.set("Fabric Test Client")
+                    runDirectory.set(ext.runDir("client"))
+                    sourceSet.set(it.sourceSetName)
+                }
             }
-            create("testmodServer") {
-                server()
-                displayName.set("Fabric Test Server")
-                runDirectory.set(ext.runDir("server"))
-                sourceSet.set(it.sourceSetName)
+
+            if (it.serverRun.get()) {
+                create("testmodServer") {
+                    server()
+                    displayName.set("Fabric Test Server")
+                    runDirectory.set(ext.runDir("server"))
+                    sourceSet.set(it.sourceSetName)
+                }
             }
         }
 
