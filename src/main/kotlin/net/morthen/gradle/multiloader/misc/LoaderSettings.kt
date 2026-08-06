@@ -52,31 +52,40 @@ fun applyLoaderSettings(current: Project, ext: MultiloaderExtension) = with(curr
             from(commonJava, commonResources)
         }
 
-        ext.testmodConfig?.let {
-            val testmodCommonJavaDep = configurations.dependencyScope("testmodCommonJavaDep")
-            val testmodCommonJava = configurations.resolvable("testmodCommonJava") { extendsFrom(testmodCommonJavaDep) }
-            val testmodCommonResourcesDep = configurations.dependencyScope("testmodCommonResourcesDep")
-            val testmodCommonResources = configurations.resolvable("testmodCommonResources") { extendsFrom(testmodCommonResourcesDep) }
+        fun configureDependencies(sourceSetName: String) {
+            val commonJavaDep = configurations.dependencyScope("${sourceSetName}CommonJavaDep")
+            val commonJava = configurations.resolvable("${sourceSetName}CommonJava") { extendsFrom(commonJavaDep) }
+            val commonResourcesDep = configurations.dependencyScope("${sourceSetName}CommonResourcesDep")
+            val commonResources = configurations.resolvable("${sourceSetName}CommonResources") { extendsFrom(commonResourcesDep) }
 
             dependencies {
-                "testmodCompileOnly"(project(commonProject)) {
+                "${sourceSetName}CompileOnly"(project(commonProject)) {
                     attributes { attribute(loaderAttribute, "common") }
-                    capabilities { requireFeature("testmod") }
+                    capabilities { requireFeature(sourceSetName) }
                 }
-
-                testmodCommonJavaDep(project(commonProject, "testmodCommonJava"))
-                testmodCommonResourcesDep(project(commonProject, "testmodCommonResources"))
+                commonJavaDep(project(commonProject, "${sourceSetName}CommonJava"))
+                commonResourcesDep(project(commonProject, "${sourceSetName}CommonResources"))
             }
 
-            tasks.named<JavaCompile>("compileTestmodJava").configure {
-                dependsOn(testmodCommonJava)
-                source(testmodCommonJava)
+            val capName = sourceSetName.replaceFirstChar(Char::uppercaseChar)
+
+            tasks.named<JavaCompile>("compile${capName}Java").configure {
+                dependsOn(commonJava)
+                source(commonJava)
             }
 
-            tasks.named<ProcessResources>("processTestmodResources").configure {
-                dependsOn(testmodCommonResources)
-                from(testmodCommonResources)
+            tasks.named<ProcessResources>("process${capName}Resources").configure {
+                dependsOn(commonResources)
+                from(commonResources)
             }
+        }
+
+        ext.testmodConfig?.let {
+            configureDependencies(it.sourceSetName.get())
+        }
+
+        ext.gametestModConfig?.let {
+            configureDependencies(it.sourceSetName.get())
         }
     }
 }

@@ -26,6 +26,7 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     abstract val minecraftVersion: Property<String>
 
     internal var testmodConfig: TestmodConfiguration? = null
+    internal var gametestModConfig: GametestModConfiguration? = null
 
     // Api stuff
     abstract val neoFormVersion: Property<String>
@@ -67,25 +68,31 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
         return File("${baseDir}/runs/${name}")
     }
 
+    private fun registerFeatureSourceSet(sourceSetName: String) = with(project) {
+        val javaPlugin = the(JavaPluginExtension::class)
+        val sourceSet = javaPlugin.sourceSets.register(sourceSetName) {
+            compileClasspath += javaPlugin.sourceSets["main"].compileClasspath
+            runtimeClasspath += javaPlugin.sourceSets["main"].runtimeClasspath
+        }
+        sourceSet.configure {
+            javaPlugin.registerFeature(sourceSetName) { usingSourceSet(this@configure) }
+            dependencies { implementationConfigurationName(javaPlugin.sourceSets["main"].output) }
+        }
+    }
+
     fun withTestMod(config: Action<TestmodConfiguration>? = null) = with(project) {
         val cfg = objects.newInstance(TestmodConfiguration::class, this@MultiloaderExtension)
         config?.execute(cfg)
 
         testmodConfig = cfg
+        registerFeatureSourceSet(cfg.sourceSetName.get())
+    }
 
-        val javaPlugin = the(JavaPluginExtension::class)
-        val testMod = javaPlugin.sourceSets.register(cfg.sourceSetName.get()) {
-            compileClasspath += javaPlugin.sourceSets["main"].compileClasspath
-            runtimeClasspath += javaPlugin.sourceSets["main"].runtimeClasspath
-        }
+    fun withGametestMod(config: Action<GametestModConfiguration>? = null) = with(project) {
+        val cfg = objects.newInstance(GametestModConfiguration::class, this@MultiloaderExtension)
+        config?.execute(cfg)
 
-        testMod.configure {
-            javaPlugin.registerFeature("testmod") {
-                usingSourceSet(this@configure)
-            }
-            dependencies {
-                implementationConfigurationName(javaPlugin.sourceSets["main"].output)
-            }
-        }
+        gametestModConfig = cfg
+        registerFeatureSourceSet(cfg.sourceSetName.get())
     }
 }
