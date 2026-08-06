@@ -108,7 +108,7 @@ fun applyModDevGradle(target: Project, ext: MultiloaderExtension) = with(target)
         val java = the<JavaPluginExtension>()
 
         runs {
-            mods.create(ext.modId.get()) { sourceSet(the<JavaPluginExtension>().sourceSets["main"]) }
+            mods.create(ext.modId.get()) { sourceSet(java.sourceSets["main"]) }
 
             register("client") {
                 client()
