@@ -10,7 +10,6 @@ import org.gradle.kotlin.dsl.project
 import org.gradle.language.jvm.tasks.ProcessResources
 
 fun applyLoaderSettings(current: Project, commonProject: String) = with(current) {
-    applyCommonSettings(current, commonProject)
 
     // this needs to be declared early because loom resolves the compileOnly configuration
     dependencies {
