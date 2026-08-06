@@ -32,9 +32,12 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
     }
 
     loom.accessWidenerPath.convention(provider {
-        the(JavaPluginExtension::class).sourceSets["main"].resources.sourceDirectories.files
+        val fileName = "${ ext.modId.get() }.classtweaker"
+
+        listOf(target, project(":common"))
+            .flatMap { it.the(JavaPluginExtension::class).sourceSets["main"].resources.sourceDirectories.files }
             .flatMap { it.listFiles()?.toList() ?: listOf() }
-            .firstOrNull { it.name == "${ ext.modId.get() }.classtweaker" }
+            .firstOrNull { it.name == fileName }
     }.map { layout.projectDirectory.file(it.absolutePath) })
 
     loom.runConfigs {
