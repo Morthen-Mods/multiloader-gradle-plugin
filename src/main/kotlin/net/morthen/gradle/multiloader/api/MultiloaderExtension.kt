@@ -1,8 +1,14 @@
 package net.morthen.gradle.multiloader.api
 
+import org.gradle.api.Action
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.newInstance
+import org.gradle.kotlin.dsl.the
 import java.io.File
 import javax.inject.Inject
 
@@ -18,6 +24,8 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     // Minecraft stuff
     abstract val loader: Property<String>
     abstract val minecraftVersion: Property<String>
+
+    internal var testmodConfig: TestmodConfiguration? = null
 
     // Api stuff
     abstract val neoFormVersion: Property<String>
@@ -57,5 +65,27 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     fun runDir(name: String): File {
         val baseDir = if (commonRunDirectory.get()) "../common" else project.projectDir
         return File("${baseDir}/runs/${name}")
+    }
+
+    fun withTestMod(config: Action<TestmodConfiguration>? = null) = with(project) {
+        val cfg = objects.newInstance(TestmodConfiguration::class, this@MultiloaderExtension)
+        config?.execute(cfg)
+
+        testmodConfig = cfg
+
+        val javaPlugin = the(JavaPluginExtension::class)
+        val testMod = javaPlugin.sourceSets.register(cfg.sourceSetName.get()) {
+            compileClasspath += javaPlugin.sourceSets["main"].compileClasspath
+            runtimeClasspath += javaPlugin.sourceSets["main"].runtimeClasspath
+        }
+
+        testMod.configure {
+            javaPlugin.registerFeature("testmod") {
+                usingSourceSet(this@configure)
+            }
+            dependencies {
+                implementationConfigurationName(javaPlugin.sourceSets["main"].output)
+            }
+        }
     }
 }

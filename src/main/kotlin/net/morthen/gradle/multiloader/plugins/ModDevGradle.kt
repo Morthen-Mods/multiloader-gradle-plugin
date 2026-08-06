@@ -28,7 +28,19 @@ fun applyCommonModDevGradle(target: Project, ext: MultiloaderExtension) = with(t
             }
         }
 
-        //TODO: add testmod and gametest
+        ext.testmodConfig?.let {
+            val testmodCommonResources = configurations.consumable("testmodCommonResources")
+            val testmodCommonJava = configurations.consumable("testmodCommonJava")
+
+            extensions.configure<JavaPluginExtension> {
+                artifacts {
+                    sourceSets[it.sourceSetName.get()].java.sourceDirectories.forEach { artifact -> add(testmodCommonJava.name, artifact) }
+                    sourceSets[it.sourceSetName.get()].resources.sourceDirectories.forEach { artifact -> add(testmodCommonResources.name, artifact) }
+                }
+            }
+        }
+
+        //TODO: add gametest
     }
 }
 

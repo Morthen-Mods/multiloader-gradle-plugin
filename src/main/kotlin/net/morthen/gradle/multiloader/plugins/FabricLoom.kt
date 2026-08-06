@@ -32,6 +32,8 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
         "minecraft"("com.mojang:minecraft:${ ext.minecraftVersion.get() }")
         "implementation"("net.fabricmc:fabric-loader:${ ext.fabricLoaderVersion.get() }")
         "implementation"("net.fabricmc.fabric-api:fabric-api:${ ext.fabricApiVersion.get() }")
+
+        "implementation"("com.terraformersmc:modmenu:18.0.0")
     }
 
     loom.runConfigs {
@@ -45,6 +47,21 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
             server()
             displayName = "Fabric Server"
             runDirectory = ext.runDir("server")
+        }
+
+        ext.testmodConfig?.let {
+            create("testmodClient") {
+                client()
+                displayName = "Fabric Test Client"
+                runDirectory = ext.runDir("client")
+                sourceSet = it.sourceSetName
+            }
+            create("testmodServer") {
+                client()
+                displayName = "Fabric Test Server"
+                runDirectory = ext.runDir("client")
+                sourceSet = it.sourceSetName
+            }
         }
     }
 
@@ -61,6 +78,12 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
     loom.mods {
         create(ext.modId.get()) {
             sourceSet("main")
+        }
+
+        ext.testmodConfig?.let {
+            create(it.modId.get()) {
+                sourceSet(it.sourceSetName.get())
+            }
         }
     }
 
