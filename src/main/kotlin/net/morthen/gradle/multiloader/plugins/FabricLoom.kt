@@ -27,8 +27,6 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
         "minecraft"("com.mojang:minecraft:${ ext.minecraftVersion.get() }")
         "implementation"("net.fabricmc:fabric-loader:${ ext.fabricLoaderVersion.get() }")
         "implementation"("net.fabricmc.fabric-api:fabric-api:${ ext.fabricApiVersion.get() }")
-
-        "implementation"("com.terraformersmc:modmenu:18.0.0")
     }
 
     loom.accessWidenerPath.convention(provider {
