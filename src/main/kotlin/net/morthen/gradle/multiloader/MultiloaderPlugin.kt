@@ -4,17 +4,19 @@ package net.morthen.gradle.multiloader
 
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
 import net.morthen.gradle.multiloader.misc.applyLoaderSettings
+import net.morthen.gradle.multiloader.misc.applyMcGradleConventions
 import net.morthen.gradle.multiloader.plugins.*
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.*
-import org.gradle.kotlin.dsl.withType
+import org.gradle.language.jvm.tasks.ProcessResources
 
 @Suppress("unused")
 abstract class MultiloaderPlugin : Plugin<Project> {
@@ -79,6 +81,7 @@ abstract class MultiloaderPlugin : Plugin<Project> {
         // so ext.loader can only be read once the project has finished evaluating.
         afterEvaluate {
             val loader = ext.loader.get()
+            applyMcGradleConventions(loader)
 
             when (loader) {
                 "common" -> {
@@ -101,6 +104,52 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                     applyLoaderSettings(this@with, ext.commonProject.get())
                 }
                 else -> throw GradleException("Unsupported multiloader.loader '$loader', expected one of: common, datagen, fabric, forge, neoforge")
+            }
+
+            fun isJson(path: String): Boolean {
+                return listOf("json", "mcmeta").any { path.endsWith(it) }
+            }
+
+            target.tasks.withType(ProcessResources::class.java).configureEach {
+                val expandProps = mapOf<String, Any?>(
+                    "version" to project.version,
+                    "java_version" to ext.javaVersion.get(),
+                    "minecraft_version" to ext.minecraftVersion.get(),
+
+                    "mod_id" to ext.modId.get(),
+                    "mod_name" to ext.modName.get(),
+                    "mod_author" to ext.modAuthor.get(),
+                    "mod_license" to ext.modLicense.get(),
+                    "mod_description" to ext.modDescription.get(),
+                )
+
+                inputs.properties(expandProps)
+
+                ext.processResourcesProperties.forEach { (patterns, extraProperties) ->
+                    val finalProps = mutableMapOf<String, Any?>()
+                    finalProps.putAll(expandProps)
+                    extraProperties?.mapValues { entry -> if(entry.value is Provider<*>) (entry.value as Provider<*>).orNull else entry.value }?.let { map ->
+                        inputs.properties(map)
+                        finalProps.putAll(map)
+                    }
+
+                    patterns.filter(::isJson).let { filters ->
+                        if(filters.isNotEmpty()) {
+                            filesMatching(filters) {
+                                expand(finalProps) {
+                                    escapeBackslash = true
+                                }
+                            }
+                        }
+                    }
+                    patterns.filterNot(::isJson).let { filters ->
+                        if(filters.isNotEmpty()) {
+                            filesMatching(filters) {
+                                expand(finalProps)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
