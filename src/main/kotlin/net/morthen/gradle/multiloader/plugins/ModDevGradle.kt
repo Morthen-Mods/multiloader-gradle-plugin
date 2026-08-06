@@ -3,18 +3,43 @@ package net.morthen.gradle.multiloader.plugins
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.the
 
 object ModDevGradle {
     const val PLUGIN_ID = "net.neoforged.moddev"
 }
 
+fun applyDefaultTransformer(target: Project, extension: NeoForgeExtension) = with(target) {
+    extension.validateAccessTransformers.set(true)
+
+    fun getFile(fileName: String): Provider<RegularFile> {
+        return provider {
+            listOf(target, project(":common"))
+                .flatMap { it.the(JavaPluginExtension::class).sourceSets["main"].resources.sourceDirectories.files }
+                .filter { it.name == "META-INF" }
+                .flatMap { it.listFiles()?.toList() ?: listOf() }
+                .firstOrNull { it.name == fileName }
+        }.map { layout.projectDirectory.file(it.absolutePath) }
+    }
+
+    val at = getFile("accesstransformer.cfg")
+    if (at.isPresent) extension.accessTransformers.from(at.get())
+
+    val iid = getFile("interface.json")
+    if (iid.isPresent) extension.interfaceInjectionData.from(iid.get())
+}
+
 fun applyCommonModDevGradle(target: Project, ext: MultiloaderExtension) = with(target) {
     pluginManager.apply(ModDevGradle.PLUGIN_ID)
+
     extensions.configure<NeoForgeExtension> {
         neoFormVersion = ext.neoFormVersion.get()
+        applyDefaultTransformer(target, this)
     }
 
     afterEvaluate {
@@ -22,6 +47,8 @@ fun applyCommonModDevGradle(target: Project, ext: MultiloaderExtension) = with(t
         val commonResources = configurations.consumable("commonResources")
 
         extensions.configure<JavaPluginExtension> {
+            sourceSets["main"].resources.srcDir("src/generated")
+
             artifacts {
                 sourceSets["main"].java.sourceDirectories.forEach { add(commonJava.name, it) }
                 sourceSets["main"].resources.sourceDirectories.forEach { add(commonResources.name, it) }
@@ -55,6 +82,20 @@ fun applyDatagenModDevGradle(target: Project, ext: MultiloaderExtension) = with(
 
     extensions.configure<NeoForgeExtension> {
         version = ext.neoForgeVersion.get()
+        applyDefaultTransformer(target, this)
+        val java = the<JavaPluginExtension>()
+
+        runs {
+            register("data") {
+                clientData()
+                systemProperty("terminal.ansi", "true")
+                ideName.set("Common Datagen")
+                gameDirectory.set(ext.runDir("data"))
+                programArguments.set(listOf("--mod", ext.modId.get(), "--all", "--output", file("../common/src/generated").absolutePath, "--existing", file("../common/src/main/resources").absolutePath))
+            }
+        }
+
+        mods.create(ext.modId.get()) { sourceSet(java.sourceSets["main"]) }
     }
 }
 
@@ -63,5 +104,6 @@ fun applyModDevGradle(target: Project, ext: MultiloaderExtension) = with(target)
 
     extensions.configure<NeoForgeExtension> {
         version = ext.neoForgeVersion.get()
+        applyDefaultTransformer(target, this)
     }
 }
