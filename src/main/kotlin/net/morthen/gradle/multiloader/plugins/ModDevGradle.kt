@@ -83,7 +83,6 @@ fun applyDatagenModDevGradle(target: Project, ext: MultiloaderExtension) = with(
     extensions.configure<NeoForgeExtension> {
         version = ext.neoForgeVersion.get()
         applyDefaultTransformer(target, this)
-        val java = the<JavaPluginExtension>()
 
         runs {
             register("data") {
@@ -95,7 +94,7 @@ fun applyDatagenModDevGradle(target: Project, ext: MultiloaderExtension) = with(
             }
         }
 
-        mods.create(ext.modId.get()) { sourceSet(java.sourceSets["main"]) }
+        mods.create(ext.modId.get()) { sourceSet(the<JavaPluginExtension>().sourceSets["main"]) }
     }
 }
 
@@ -105,5 +104,72 @@ fun applyModDevGradle(target: Project, ext: MultiloaderExtension) = with(target)
     extensions.configure<NeoForgeExtension> {
         version = ext.neoForgeVersion.get()
         applyDefaultTransformer(target, this)
+
+        val java = the<JavaPluginExtension>()
+
+        runs {
+            mods.create(ext.modId.get()) { sourceSet(the<JavaPluginExtension>().sourceSets["main"]) }
+
+            register("client") {
+                client()
+                ideName.set("NeoForge Client")
+                gameDirectory.set(ext.runDir("client"))
+                programArguments.set(listOf("--username", ext.modAuthor.get()))
+
+                sourceSet.set(java.sourceSets["main"])
+                loadedMods.set(listOf(mods[ext.modId.get()]))
+            }
+            register("server") {
+                server()
+                ideName.set("NeoForge Server")
+                gameDirectory.set(ext.runDir("server"))
+                programArguments.set(listOf("--nogui"))
+
+                sourceSet.set(java.sourceSets["main"])
+                loadedMods.set(listOf(mods[ext.modId.get()]))
+            }
+
+            ext.testmodConfig?.let { testmod ->
+                mods.create(testmod.modId.get()) { sourceSet(java.sourceSets[testmod.sourceSetName.get()]) }
+
+                if (testmod.clientRun.get()) {
+                    register("testmodClient") {
+                        client()
+                        ideName.set("NeoForge Test Client")
+                        gameDirectory.set(ext.runDir("client"))
+                        programArguments.set(listOf("--username", ext.modAuthor.get()))
+
+                        sourceSet.set(testmod.sourceSetName.map { java.sourceSets[it] })
+                        loadedMods.set(listOf(mods[ext.modId.get()], mods[testmod.modId.get()]))
+                    }
+                }
+
+                if (testmod.serverRun.get()) {
+                    register("testmodServer") {
+                        server()
+                        ideName.set("NeoForge Test Server")
+                        gameDirectory.set(ext.runDir("server"))
+                        programArguments.set(listOf("--nogui"))
+
+                        sourceSet.set(testmod.sourceSetName.map { java.sourceSets[it] })
+                        loadedMods.set(listOf(mods[ext.modId.get()], mods[testmod.modId.get()]))
+                    }
+                }
+            }
+
+            ext.gametestModConfig?.let { gametest ->
+                mods.create(gametest.modId.get()) { sourceSet(java.sourceSets[gametest.sourceSetName.get()]) }
+
+                register("gametestServer") {
+                    type.set("gameTestServer")
+                    ideName.set("NeoForge Game Test")
+                    gameDirectory.set(ext.runDir("server"))
+                    systemProperty("neoforge.enableGameTest", "true")
+
+                    sourceSet.set(gametest.sourceSetName.map { java.sourceSets[it] })
+                    loadedMods.set(listOf(mods[ext.modId.get()], mods[gametest.modId.get()]))
+                }
+            }
+        }
     }
 }
