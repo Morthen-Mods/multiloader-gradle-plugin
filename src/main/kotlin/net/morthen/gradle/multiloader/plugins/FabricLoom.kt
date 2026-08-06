@@ -43,6 +43,7 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
             client()
             displayName.set("Fabric Client")
             runDirectory.set(ext.runDir("client"))
+            programArguments.set(listOf("--username", ext.modAuthor.get()))
         }
 
         named("server") {
@@ -58,6 +59,7 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
                     displayName.set("Fabric Test Client")
                     runDirectory.set(ext.runDir("client"))
                     sourceSet.set(it.sourceSetName)
+                    programArguments.set(listOf("--username", ext.modAuthor.get()))
                 }
             }
 
