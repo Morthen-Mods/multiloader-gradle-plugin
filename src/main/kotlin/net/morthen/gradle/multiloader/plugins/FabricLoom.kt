@@ -25,8 +25,14 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
 
     dependencies {
         "minecraft"("com.mojang:minecraft:${ ext.minecraftVersion.get() }")
-        "implementation"("net.fabricmc:fabric-loader:${ ext.fabricLoaderVersion.get() }")
-        "implementation"("net.fabricmc.fabric-api:fabric-api:${ ext.fabricApiVersion.get() }")
+
+        if (ext.fabricApiVersion.isPresent) {
+            "implementation"("net.fabricmc.fabric-api:fabric-api:${ ext.fabricApiVersion.get() }")
+        }
+
+        if (ext.fabricLoaderVersion.isPresent) {
+            "implementation"("net.fabricmc:fabric-loader:${ ext.fabricLoaderVersion.get() }")
+        }
     }
 
     loom.accessWidenerPath.convention(provider {
