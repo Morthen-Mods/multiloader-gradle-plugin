@@ -5,14 +5,21 @@ import net.minecraftforge.gradle.MinecraftExtension
 import net.minecraftforge.gradle.MinecraftExtensionForProject
 import net.minecraftforge.gradle.SlimeLauncherOptions
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
+import net.neoforged.moddevgradle.dsl.DataFileCollection
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.JavaExec
+import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.repositories
 import org.gradle.kotlin.dsl.the
+import org.gradle.plugins.ide.idea.model.IdeaModel
+import org.jetbrains.gradle.ext.Gradle
+import org.jetbrains.gradle.ext.runConfigurations
+import org.jetbrains.gradle.ext.settings
 
 object ForgeGradle {
     const val PLUGIN_ID = "net.minecraftforge.gradle"
@@ -29,13 +36,20 @@ object ForgeGradle {
 private fun SlimeLauncherOptions.configureBootstrapLaunch(client: Boolean) {
     mainClass.set("net.minecraftforge.bootstrap.ForgeBootstrap")
     jvmArgs.set(listOf("-Djava.net.preferIPv6Addresses=system", "-XX:+UseCompactObjectHeaders"))
-    systemProperty("forge.enableGameTest", "true")
     environment("MCP_MAPPINGS", "{mcp_mappings}")
 
     args("--gameDir", ".", "--launchTarget", if (client) "forge_userdev_client" else "forge_userdev_server")
     if (client) {
         args("--version", "MOD_DEV", "--assetIndex", "{asset_index}", "--assetsDir", "{assets_root}")
     }
+}
+
+fun addIfExists(collection: ConfigurableFileCollection, target: Project, relativePath: String) {
+    val commonFile = target.project(":common").file(relativePath)
+    val selfFile = target.file(relativePath)
+
+    if (commonFile.exists()) collection.from(commonFile)
+    if (selfFile.exists()) collection.from(selfFile)
 }
 
 fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) {
@@ -66,15 +80,29 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
         "implementation"(minecraft.dependency("net.minecraftforge:forge:${ext.minecraftVersion.get()}-${ext.forgeVersion.get()}"))
     }
 
+    minecraft.accessTransformers.convention(true)
+    addIfExists(minecraft.accessTransformers, target, "src/main/resources/META-INF/accesstransformer.cfg")
+
     minecraft.runs {
         register("client") {
             workingDir.set(ext.runDir("client"))
             ext.forgeMixins.get().forEach { mixin -> args("--mixin.config=$mixin") }
+
+            rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Forge Client") {
+                taskNames = listOf(":${project.name}:runClient")
+                setProject(project)
+            }
         }
 
         register("server") {
             workingDir.set(ext.runDir("server"))
             ext.forgeMixins.get().forEach { mixin -> args("--mixin.config=$mixin") }
+            args("--nogui")
+
+            rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Forge Server") {
+                taskNames = listOf(":${project.name}:runServer")
+                setProject(project)
+            }
         }
 
         ext.testmodConfig?.let { testmod ->
@@ -83,6 +111,11 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
                     workingDir.set(ext.runDir("client"))
                     configureBootstrapLaunch(client = true)
                     ext.forgeMixins.get().forEach { mixin -> args("--mixin.config=$mixin") }
+
+                    rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Forge Test Client") {
+                        taskNames = listOf(":${project.name}:runTestmodClient")
+                        setProject(project)
+                    }
                 }
             }
 
@@ -91,26 +124,64 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
                     workingDir.set(ext.runDir("server"))
                     configureBootstrapLaunch(client = false)
                     ext.forgeMixins.get().forEach { mixin -> args("--mixin.config=$mixin") }
+                    args("--nogui")
+
+                    rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Forge Test Server") {
+                        taskNames = listOf(":${project.name}:runTestmodServer")
+                        setProject(project)
+                    }
                 }
+            }
+        }
+
+        ext.gametestModConfig?.let { gametest ->
+            register("gameTestServer") {
+                workingDir.set(ext.runDir("server"))
+                systemProperty("forge.enableGameTest", "True")
+                systemProperty("forge.enableGameTestNamespaces", gametest.modId.get());
+
+                rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Forge Gametest Server") {
+                    taskNames = listOf(":${project.name}:runGameTestServer")
+                    setProject(project)
+                }
+            }
+
+            // Gradle run will not be registered, since it is only a requirement for the GameTestServer run.
+            // Forge doesn't apply the json data needed via Code, so we have to generate it before running the Gametest Server.
+            register("data") {
+                workingDir.set(ext.runDir("data"))
+                args("--mod", gametest.modId.get(), "--all", "--output", file("src/${ gametest.sourceSetName.get() }/generated").absolutePath)
             }
         }
     }
 
-    // ForgeGradle's run tasks only put getDefaultSourceSets() (main-only, or main+test for the
-    // auto-generated per-sourceSet task variants) on the launch classpath; mods{} above does not
-    // affect it. Adding testmod's compiled output directly to the auto-generated task's own (public,
-    // standard Gradle) classpath is what actually gets it in front of FML's mod scanner.
-    ext.testmodConfig?.let { testmod ->
-        afterEvaluate {
-            val testmodOutput = java.sourceSets[testmod.sourceSetName.get()].output
+    afterEvaluate {
+        // ForgeGradle's run tasks only put getDefaultSourceSets() (main-only, or main+test for the
+        // auto-generated per-sourceSet task variants) on the launch classpath; mods{} above does not
+        // affect it. Adding testmod's compiled output directly to the auto-generated task's own (public,
+        // standard Gradle) classpath is what actually gets it in front of FML's mod scanner.
+        ext.testmodConfig?.let { testmod ->
+            val tmOutput = java.sourceSets[testmod.sourceSetName.get()].output
 
             if (testmod.clientRun.get()) {
-                tasks.named<JavaExec>("runTestmodClient") { classpath(testmodOutput) }
+                tasks.named<JavaExec>("runTestmodClient") { classpath(tmOutput) }
             }
 
             if (testmod.serverRun.get()) {
-                tasks.named<JavaExec>("runTestmodServer") { classpath(testmodOutput) }
+                tasks.named<JavaExec>("runTestmodServer") { classpath(tmOutput) }
             }
+        }
+
+        ext.gametestModConfig?.let { gametest ->
+            val gOutput = java.sourceSets[gametest.sourceSetName.get()].output
+
+            tasks.named<JavaExec>("runData") { classpath(gOutput) }
+            tasks.named<JavaExec>("runGameTestServer") {
+                classpath(gOutput)
+                dependsOn(":${ project.name }:runData")
+            }
+
+            java.sourceSets[gametest.sourceSetName.get()].resources { srcDir("src/${ gametest.sourceSetName.get() }/generated/") }
         }
     }
 }
