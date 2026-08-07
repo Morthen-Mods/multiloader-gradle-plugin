@@ -61,7 +61,7 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
     // But surprise it isn't
     java.sourceSets.configureEach {
         val dir = layout.buildDirectory.dir("sourcesSets/$name")
-        output.setResourcesDir(dir.get().asFile)
+        output.setResourcesDir(dir.get())
         getJava().destinationDirectory.set(dir)
     }
 
@@ -80,7 +80,6 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
         "implementation"(minecraft.dependency("net.minecraftforge:forge:${ext.minecraftVersion.get()}-${ext.forgeVersion.get()}"))
     }
 
-    minecraft.accessTransformers.convention(true)
     addIfExists(minecraft.accessTransformers, target, "src/main/resources/META-INF/accesstransformer.cfg")
 
     minecraft.runs {

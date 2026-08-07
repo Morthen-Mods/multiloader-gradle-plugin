@@ -28,6 +28,7 @@ abstract class MultiloaderPlugin : Plugin<Project> {
     override fun apply(target: Project) = with(target) {
         pluginManager.apply("java-library")
         pluginManager.apply("maven-publish")
+        pluginManager.apply("version-catalog")
 
         applyDefaultRepositories()
 
