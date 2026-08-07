@@ -1,37 +1,35 @@
 package net.morthen.gradle.multiloader.plugins
 
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
+import net.neoforged.moddevgradle.dsl.DataFileCollection
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
 import org.gradle.api.Project
 import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
+import java.io.File
 
 object ModDevGradle {
     const val PLUGIN_ID = "net.neoforged.moddev"
 }
 
-fun applyDefaultTransformer(target: Project, extension: NeoForgeExtension) = with(target) {
+private fun addIfExists(collection: DataFileCollection, target: Project, relativePath: String) {
+    val commonFile = target.project(":common").file(relativePath)
+    val selfFile = target.file(relativePath)
+
+    if (commonFile.exists()) collection.from(commonFile)
+    if (selfFile.exists()) collection.from(selfFile)
+}
+
+fun applyDefaultTransformer(target: Project, extension: NeoForgeExtension) {
     extension.validateAccessTransformers.set(true)
 
-    fun getFile(fileName: String): Provider<RegularFile> {
-        return provider {
-            listOf(target, project(":common"))
-                .flatMap { it.the(JavaPluginExtension::class).sourceSets["main"].resources.sourceDirectories.files }
-                .filter { it.name == "META-INF" }
-                .flatMap { it.listFiles()?.toList() ?: listOf() }
-                .firstOrNull { it.name == fileName }
-        }.map { layout.projectDirectory.file(it.absolutePath) }
-    }
-
-    val at = getFile("accesstransformer.cfg")
-    if (at.isPresent) extension.accessTransformers.from(at.get())
-
-    val iid = getFile("interface.json")
-    if (iid.isPresent) extension.interfaceInjectionData.from(iid.get())
+    addIfExists(extension.accessTransformers, target, "src/main/resources/META-INF/accesstransformer.cfg")
+    addIfExists(extension.interfaceInjectionData, target, "src/main/resources/META-INF/interface.json")
 }
 
 fun applyCommonModDevGradle(target: Project, ext: MultiloaderExtension) = with(target) {
