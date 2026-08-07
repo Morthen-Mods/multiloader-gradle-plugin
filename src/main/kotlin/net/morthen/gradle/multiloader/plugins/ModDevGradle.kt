@@ -4,20 +4,16 @@ import net.morthen.gradle.multiloader.api.MultiloaderExtension
 import net.neoforged.moddevgradle.dsl.DataFileCollection
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
 import org.gradle.api.Project
-import org.gradle.api.file.RegularFile
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.api.provider.Provider
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
-import java.io.File
 
 object ModDevGradle {
     const val PLUGIN_ID = "net.neoforged.moddev"
 }
 
-private fun addIfExists(collection: DataFileCollection, target: Project, relativePath: String) {
+fun addIfExists(collection: DataFileCollection, target: Project, relativePath: String) {
     val commonFile = target.project(":common").file(relativePath)
     val selfFile = target.file(relativePath)
 
