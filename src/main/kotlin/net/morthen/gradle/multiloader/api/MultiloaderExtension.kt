@@ -27,7 +27,7 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
     abstract val minecraftVersion: Property<String>
 
     internal var testmodConfig: TestmodConfiguration? = null
-    internal var gametestModConfig: GametestModConfiguration? = null
+    internal var gametestModConfig: GametestConfiguration? = null
 
     // Api stuff
     abstract val neoFormVersion: Property<String>
@@ -93,8 +93,8 @@ abstract class MultiloaderExtension @Inject constructor(factory: ProviderFactory
         registerFeatureSourceSet(cfg.sourceSetName.get())
     }
 
-    fun withGametestMod(config: Action<GametestModConfiguration>? = null) = with(project) {
-        val cfg = objects.newInstance(GametestModConfiguration::class, this@MultiloaderExtension)
+    fun withGametest(config: Action<GametestConfiguration>? = null) = with(project) {
+        val cfg = objects.newInstance(GametestConfiguration::class, this@MultiloaderExtension)
         config?.execute(cfg)
 
         gametestModConfig = cfg

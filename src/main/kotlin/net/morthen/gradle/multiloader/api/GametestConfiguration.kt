@@ -3,7 +3,7 @@ package net.morthen.gradle.multiloader.api
 import org.gradle.api.provider.Property
 import javax.inject.Inject
 
-abstract class GametestModConfiguration @Inject constructor(ext: MultiloaderExtension){
+abstract class GametestConfiguration @Inject constructor(ext: MultiloaderExtension){
     abstract val modId: Property<String>
     abstract val sourceSetName: Property<String>
 
