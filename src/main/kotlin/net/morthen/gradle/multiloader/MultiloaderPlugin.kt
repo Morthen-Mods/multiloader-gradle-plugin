@@ -10,6 +10,7 @@ import net.morthen.gradle.multiloader.plugins.*
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Provider
 import org.gradle.api.publish.PublishingExtension
@@ -34,9 +35,12 @@ abstract class MultiloaderPlugin : Plugin<Project> {
 
         val ext = extensions.create<MultiloaderExtension>("multiloader")
         val javaExt = the<JavaPluginExtension>()
+        val base = the<BasePluginExtension>()
 
         javaExt.toolchain.languageVersion.set(JavaLanguageVersion.of(ext.javaVersion.get()))
         javaExt.withSourcesJar()
+
+        base.archivesName.set("${ ext.modId.get() }-${ target.name }-${ ext.minecraftVersion.get() }")
 
         tasks.withType<JavaCompile>().configureEach {
             options.release = ext.javaVersion
