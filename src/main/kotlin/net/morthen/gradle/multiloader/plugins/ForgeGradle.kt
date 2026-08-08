@@ -10,6 +10,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.JavaExec
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
@@ -181,6 +182,14 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
             }
 
             java.sourceSets[gametest.sourceSetName.get()].resources { srcDir("src/${ gametest.sourceSetName.get() }/generated/") }
+        }
+
+        tasks.named<Jar>("jar") {
+            manifest {
+                attributes(mapOf<String, Any>(
+                    "MixinConfig" to ext.forgeMixins.map { it.joinToString(",") }
+                ))
+            }
         }
     }
 }
