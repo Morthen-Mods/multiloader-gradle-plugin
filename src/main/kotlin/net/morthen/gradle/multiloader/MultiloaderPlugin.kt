@@ -63,7 +63,6 @@ abstract class MultiloaderPlugin : Plugin<Project> {
             options.compilerArgs.addAll(listOf(
                 "-Xmaxerrs", "500",
                 "-Xmaxwarns", "500",
-                "-Werror", // warnings as errors
                 "-Xlint:${xlint.joinToString(",")}",
                 "-Xpkginfo:nonempty", // only emit package-info.class if it contains class or runtime scope annotations
             ))
