@@ -139,6 +139,7 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
                 workingDir.set(ext.runDir("server"))
                 systemProperty("forge.enableGameTest", "True")
                 systemProperty("forge.enableGameTestNamespaces", gametest.modId.get());
+                ext.forgeMixins.get().forEach { mixin -> args("--mixin.config=$mixin") }
 
                 rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Forge Gametest Server") {
                     taskNames = listOf(":${project.name}:runGameTestServer")
