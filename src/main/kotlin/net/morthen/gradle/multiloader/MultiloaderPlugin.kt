@@ -5,12 +5,12 @@ package net.morthen.gradle.multiloader
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
 import net.morthen.gradle.multiloader.misc.applyDefaultRepositories
 import net.morthen.gradle.multiloader.misc.applyLoaderSettings
-import net.morthen.gradle.multiloader.misc.applyMcGradleConventions
 import net.morthen.gradle.multiloader.misc.applyModPublishSettings
 import net.morthen.gradle.multiloader.plugins.*
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Provider
@@ -81,7 +81,6 @@ abstract class MultiloaderPlugin : Plugin<Project> {
         // so ext.loader can only be read once the project has finished evaluating.
         afterEvaluate {
             val loader = ext.loader.get()
-            applyMcGradleConventions(loader)
 
             when (loader) {
                 "common" -> {
@@ -107,6 +106,12 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                     applyModPublishSettings(this@with, ext)
                 }
                 else -> throw GradleException("Unsupported multiloader.loader '$loader', expected one of: common, datagen, fabric, forge, neoforge")
+            }
+
+            val javaComponent = components["java"] as AdhocComponentWithVariants
+            listOfNotNull(ext.testmodConfig?.sourceSetName?.get(), ext.gametestModConfig?.sourceSetName?.get()).forEach { sourceSetName ->
+                javaComponent.withVariantsFromConfiguration(configurations["${sourceSetName}ApiElements"]) { skip() }
+                javaComponent.withVariantsFromConfiguration(configurations["${sourceSetName}RuntimeElements"]) { skip() }
             }
 
             the<PublishingExtension>().apply {
