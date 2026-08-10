@@ -15,7 +15,9 @@ fun applyLoaderSettings(current: Project, ext: MultiloaderExtension) = with(curr
 
     // this needs to be declared early because loom resolves the compileOnly configuration
     dependencies {
-        "compileOnly"(project(commonProject))
+        "compileOnly"(project(commonProject)) {
+            attributes { attribute(loaderAttribute, "common") }
+        }
     }
 
     afterEvaluate {
@@ -57,7 +59,9 @@ fun applyLoaderSettings(current: Project, ext: MultiloaderExtension) = with(curr
             val commonResources = configurations.resolvable("${sourceSetName}CommonResources") { extendsFrom(commonResourcesDep) }
 
             dependencies {
-                "${sourceSetName}CompileOnly"(project(commonProject))
+                "${sourceSetName}CompileOnly"(project(commonProject)) {
+                    attributes { attribute(loaderAttribute, "common") }
+                }
                 commonJavaDep(project(commonProject, "${sourceSetName}CommonJava"))
                 commonResourcesDep(project(commonProject, "${sourceSetName}CommonResources"))
             }

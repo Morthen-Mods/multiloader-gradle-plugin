@@ -5,6 +5,7 @@ package net.morthen.gradle.multiloader
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
 import net.morthen.gradle.multiloader.misc.applyDefaultRepositories
 import net.morthen.gradle.multiloader.misc.applyLoaderSettings
+import net.morthen.gradle.multiloader.misc.applyMcGradleConventions
 import net.morthen.gradle.multiloader.misc.applyModPublishSettings
 import net.morthen.gradle.multiloader.plugins.*
 import org.gradle.api.GradleException
@@ -81,6 +82,7 @@ abstract class MultiloaderPlugin : Plugin<Project> {
         // so ext.loader can only be read once the project has finished evaluating.
         afterEvaluate {
             val loader = ext.loader.get()
+            applyMcGradleConventions(loader)
 
             when (loader) {
                 "common" -> {
