@@ -6,6 +6,7 @@ import net.morthen.gradle.multiloader.api.MultiloaderExtension
 import net.morthen.gradle.multiloader.misc.applyDefaultRepositories
 import net.morthen.gradle.multiloader.misc.applyLoaderSettings
 import net.morthen.gradle.multiloader.misc.applyMcGradleConventions
+import net.morthen.gradle.multiloader.misc.applyModPublishSettings
 import net.morthen.gradle.multiloader.plugins.*
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
@@ -112,14 +113,17 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                 "fabric" -> {
                     applyFabricLoom(this@with, ext)
                     applyLoaderSettings(this@with, ext)
+                    applyModPublishSettings(this@with, ext)
                 }
                 "forge" -> {
                     applyForgeGradle(this@with, ext)
                     applyLoaderSettings(this@with, ext)
+                    applyModPublishSettings(this@with, ext)
                 }
                 "neoforge" -> {
                     applyModDevGradle(this@with, ext)
                     applyLoaderSettings(this@with, ext)
+                    applyModPublishSettings(this@with, ext)
                 }
                 else -> throw GradleException("Unsupported multiloader.loader '$loader', expected one of: common, datagen, fabric, forge, neoforge")
             }

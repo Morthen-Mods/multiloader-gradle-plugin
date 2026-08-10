@@ -64,6 +64,27 @@ multiloader {
         sourceSetName = "<source_set_name>" // defaults to gametest
     }
 
+    // Publishes the loader's jar to CurseForge/Modrinth via modmuss50/mod-publish-plugin
+    // Only applies to fabric/forge/neoforge projects, call it separately in each loader's build.gradle.kts
+    // Publishing to a platform is skipped automatically if its id/token pair isn't present
+    withModPublish {
+        changelogFile = "CHANGELOG.md" // resolved relative to the root project, defaults to CHANGELOG.md
+        versionType = "stable"         // stable | beta | alpha
+
+        curseforgeId = "curseforge_id"  // defaults to the `curseforge_id` gradle property
+        curseforgeApi = "CURSEFORGE_API" // defaults to the `CURSEFORGE_API` environment variable
+        modrinthId = "modrinth_id"       // defaults to the `modrinth_id` gradle property
+        modrinthApi = "MODRINTH_API"     // defaults to the `MODRINTH_API` environment variable
+
+        client = true  // defaults to true
+        server = true  // defaults to true
+
+        required = listOf("fabric-api")   // hard dependencies, per platform slug
+        optional = listOf()               // optional dependencies
+        incompatible = listOf()           // incompatible mods
+        embedded = listOf()               // mods bundled inside the jar
+    }
+
     // define keys that should be replaced inside the configured files
     // define loader specific replacements and the corresponding files, has to be for each loader seperately
     // These are examples and don't have to be used this way, you can name your keys as you like

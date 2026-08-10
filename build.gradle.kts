@@ -27,6 +27,8 @@ dependencies {
     compileOnly(gradleKotlinDsl())
 
     implementation(libs.idea.ext)
+    implementation(libs.mod.publish)
+
     compileOnly(libs.moddevgradle)
     compileOnly(libs.fabric.loom)
     compileOnly(libs.forge.gradle)
