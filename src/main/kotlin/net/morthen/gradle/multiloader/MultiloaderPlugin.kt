@@ -80,6 +80,7 @@ abstract class MultiloaderPlugin : Plugin<Project> {
         the<PublishingExtension>().apply {
             publications {
                 register<MavenPublication>("mavenJava") {
+                    artifactId = "${ ext.modId.get() }-${ ext.loader.get() }"
                     from(components["java"])
                 }
             }
