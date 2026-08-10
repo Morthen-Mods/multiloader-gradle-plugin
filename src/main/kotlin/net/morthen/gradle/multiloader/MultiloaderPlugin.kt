@@ -77,26 +77,6 @@ abstract class MultiloaderPlugin : Plugin<Project> {
             filteringCharset = "UTF-8"
         }
 
-        the<PublishingExtension>().apply {
-            publications {
-                register<MavenPublication>("mavenJava") {
-                    artifactId = "${ ext.modId.get() }-${ ext.loader.get() }"
-                    from(components["java"])
-                }
-            }
-
-            providers.environmentVariable("MAVEN_URL").orNull?.let { url ->
-                repositories {
-                    maven(url) {
-                        credentials {
-                            username = providers.environmentVariable("MAVEN_USER").orNull
-                            password = providers.environmentVariable("MAVEN_PASSWORD").orNull
-                        }
-                    }
-                }
-            }
-        }
-
         // the `multiloader { }` block in the consumer's build script runs after apply(),
         // so ext.loader can only be read once the project has finished evaluating.
         afterEvaluate {
@@ -127,6 +107,26 @@ abstract class MultiloaderPlugin : Plugin<Project> {
                     applyModPublishSettings(this@with, ext)
                 }
                 else -> throw GradleException("Unsupported multiloader.loader '$loader', expected one of: common, datagen, fabric, forge, neoforge")
+            }
+
+            the<PublishingExtension>().apply {
+                publications {
+                    register<MavenPublication>("mavenJava") {
+                        artifactId = "${ ext.modId.get() }-${ ext.loader.get() }"
+                        from(components["java"])
+                    }
+                }
+
+                providers.environmentVariable("MAVEN_URL").orNull?.let { url ->
+                    repositories {
+                        maven(url) {
+                            credentials {
+                                username = providers.environmentVariable("MAVEN_USER").orNull
+                                password = providers.environmentVariable("MAVEN_PASSWORD").orNull
+                            }
+                        }
+                    }
+                }
             }
 
             fun isJson(path: String): Boolean {
