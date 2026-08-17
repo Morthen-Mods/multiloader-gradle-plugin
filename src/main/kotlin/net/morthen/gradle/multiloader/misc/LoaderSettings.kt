@@ -2,50 +2,81 @@ package net.morthen.gradle.multiloader.misc
 
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
-import org.gradle.kotlin.dsl.the
+import org.gradle.language.jvm.tasks.ProcessResources
 
 fun applyLoaderSettings(current: Project, ext: MultiloaderExtension) = with(current) {
     val commonProject = ":common"
 
     // this needs to be declared early because loom resolves the compileOnly configuration
     dependencies {
-        "compileOnly"(project(commonProject))
+        "compileOnly"(project(commonProject)) {
+            attributes { attribute(loaderAttribute, "common") }
+        }
     }
 
     afterEvaluate {
-        val javaExt = the<JavaPluginExtension>()
+        val commonJavaDep = configurations.dependencyScope("commonJavaDep")
+        val commonJava = configurations.resolvable("commonJava") { extendsFrom(commonJavaDep) }
 
-        // Wiring common's sources in directly as extra srcDirs (rather than only feeding them into the
-        // compile task via source()/from()) is what lets the IDE's Gradle sync see them as part of this
-        // sourceSet, so cross-project imports from common resolve in the editor, not just on the CLI.
-        fun linkCommonSources(sourceSetName: String, javaConfigName: String, resourcesConfigName: String) {
-            val javaDep = configurations.dependencyScope("${javaConfigName}Dep")
-            val java = configurations.resolvable(javaConfigName) { extendsFrom(javaDep) }
-            val resourcesDep = configurations.dependencyScope("${resourcesConfigName}Dep")
-            val resources = configurations.resolvable(resourcesConfigName) { extendsFrom(resourcesDep) }
+        val commonResourcesDep = configurations.dependencyScope("commonResourcesDep")
+        val commonResources = configurations.resolvable("commonResources") { extendsFrom(commonResourcesDep) }
 
-            dependencies {
-                javaDep(project(commonProject, javaConfigName))
-                resourcesDep(project(commonProject, resourcesConfigName))
-            }
-
-            val sourceSet = javaExt.sourceSets[sourceSetName]
-            sourceSet.java.srcDir(java.get())
-            sourceSet.resources.srcDir(resources.get())
+        dependencies {
+            commonJavaDep(project(commonProject, "commonJava"))
+            commonResourcesDep(project(commonProject, "commonResources"))
         }
 
-        linkCommonSources("main", "commonJava", "commonResources")
+        tasks.named<JavaCompile>("compileJava").configure {
+            dependsOn(commonJava)
+            source(commonJava)
+        }
+
+        tasks.named<ProcessResources>("processResources").configure {
+            dependsOn(commonResources)
+            from(commonResources)
+        }
+
+        tasks.named<Javadoc>("javadoc").configure {
+            dependsOn(commonJava)
+            source(commonJava)
+        }
+
+        tasks.named<Jar>("sourcesJar").configure {
+            dependsOn(commonJava, commonResources)
+            from(commonJava, commonResources)
+        }
 
         fun configureDependencies(sourceSetName: String) {
+            val commonJavaDep = configurations.dependencyScope("${sourceSetName}CommonJavaDep")
+            val commonJava = configurations.resolvable("${sourceSetName}CommonJava") { extendsFrom(commonJavaDep) }
+            val commonResourcesDep = configurations.dependencyScope("${sourceSetName}CommonResourcesDep")
+            val commonResources = configurations.resolvable("${sourceSetName}CommonResources") { extendsFrom(commonResourcesDep) }
+
             dependencies {
-                "${sourceSetName}CompileOnly"(project(commonProject))
+                "${sourceSetName}CompileOnly"(project(commonProject)) {
+                    attributes { attribute(loaderAttribute, "common") }
+                }
+                commonJavaDep(project(commonProject, "${sourceSetName}CommonJava"))
+                commonResourcesDep(project(commonProject, "${sourceSetName}CommonResources"))
             }
 
-            linkCommonSources(sourceSetName, "${sourceSetName}CommonJava", "${sourceSetName}CommonResources")
+            val capName = sourceSetName.replaceFirstChar(Char::uppercaseChar)
+
+            tasks.named<JavaCompile>("compile${capName}Java").configure {
+                dependsOn(commonJava)
+                source(commonJava)
+            }
+
+            tasks.named<ProcessResources>("process${capName}Resources").configure {
+                dependsOn(commonResources)
+                from(commonResources)
+            }
         }
 
         ext.testmodConfig?.let {

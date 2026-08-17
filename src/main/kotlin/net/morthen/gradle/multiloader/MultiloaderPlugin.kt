@@ -4,6 +4,7 @@ package net.morthen.gradle.multiloader
 
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
 import net.morthen.gradle.multiloader.misc.applyDefaultRepositories
+import net.morthen.gradle.multiloader.misc.applyGradleConvention
 import net.morthen.gradle.multiloader.misc.applyLoaderSettings
 import net.morthen.gradle.multiloader.misc.applyModPublishSettings
 import net.morthen.gradle.multiloader.plugins.*
@@ -81,12 +82,14 @@ abstract class MultiloaderPlugin : Plugin<Project> {
         // so ext.loader can only be read once the project has finished evaluating.
         afterEvaluate {
             val loader = ext.loader.get()
+            applyGradleConvention(loader)
 
             when (loader) {
                 "common" -> {
                     applyCommonModDevGradle(this@with, ext)
                 }
                 "datagen" -> {
+                    applyGradleConvention("neoforge")
                     applyDatagenModDevGradle(this@with, ext)
                     applyLoaderSettings(this@with, ext)
                 }
