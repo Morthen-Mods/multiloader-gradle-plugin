@@ -64,13 +64,10 @@ fun applyDatagenModDevGradle(target: Project, ext: MultiloaderExtension) = with(
         applyDefaultTransformer(target, this)
 
         runs {
-            configureEach {
-                disableIdeRun()
-                systemProperty("terminal.ansi", "true")
-            }
-
             register("data") {
                 clientData()
+                disableIdeRun()
+                systemProperty("terminal.ansi", "true")
                 gameDirectory.set(ext.runDir("data"))
                 programArguments.set(listOf("--mod", ext.modId.get(), "--all", "--output", file("../common/src/generated").absolutePath, "--existing", file("../common/src/main/resources").absolutePath))
 
@@ -99,6 +96,12 @@ fun applyModDevGradle(target: Project, ext: MultiloaderExtension) = with(target)
             configureEach {
                 disableIdeRun()
                 systemProperty("terminal.ansi", "true")
+
+                val upperName = name.replaceFirstChar { it.uppercase() }
+                rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("NeoForge $upperName") {
+                    taskNames = listOf(":${project.name}:run$upperName")
+                    setProject(project)
+                }
             }
 
             register("client") {
@@ -108,11 +111,6 @@ fun applyModDevGradle(target: Project, ext: MultiloaderExtension) = with(target)
 
                 sourceSet.set(java.sourceSets["main"])
                 loadedMods.set(listOf(mods[ext.modId.get()]))
-
-                rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("NeoForge Client") {
-                    taskNames = listOf(":${project.name}:runClient")
-                    setProject(project)
-                }
             }
             register("server") {
                 server()
@@ -121,11 +119,6 @@ fun applyModDevGradle(target: Project, ext: MultiloaderExtension) = with(target)
 
                 sourceSet.set(java.sourceSets["main"])
                 loadedMods.set(listOf(mods[ext.modId.get()]))
-
-                rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("NeoForge Server") {
-                    taskNames = listOf(":${project.name}:runServer")
-                    setProject(project)
-                }
             }
 
             ext.testmodConfig?.let { testmod ->
@@ -139,11 +132,6 @@ fun applyModDevGradle(target: Project, ext: MultiloaderExtension) = with(target)
 
                         sourceSet.set(testmod.sourceSetName.map { java.sourceSets[it] })
                         loadedMods.set(listOf(mods[ext.modId.get()], mods[testmod.modId.get()]))
-
-                        rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("NeoForge Test Client") {
-                            taskNames = listOf(":${project.name}:runTestmodClient")
-                            setProject(project)
-                        }
                     }
                 }
 
@@ -155,11 +143,6 @@ fun applyModDevGradle(target: Project, ext: MultiloaderExtension) = with(target)
 
                         sourceSet.set(testmod.sourceSetName.map { java.sourceSets[it] })
                         loadedMods.set(listOf(mods[ext.modId.get()], mods[testmod.modId.get()]))
-
-                        rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("NeoForge Test Server") {
-                            taskNames = listOf(":${project.name}:runTestmodServer")
-                            setProject(project)
-                        }
                     }
                 }
             }
@@ -174,11 +157,6 @@ fun applyModDevGradle(target: Project, ext: MultiloaderExtension) = with(target)
 
                     sourceSet.set(gametest.sourceSetName.map { java.sourceSets[it] })
                     loadedMods.set(listOf(mods[ext.modId.get()], mods[gametest.modId.get()]))
-
-                    rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("NeoForge Gametest") {
-                        taskNames = listOf(":${project.name}:runGametestServer")
-                        setProject(project)
-                    }
                 }
             }
         }

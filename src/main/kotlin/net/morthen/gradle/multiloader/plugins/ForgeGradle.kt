@@ -84,25 +84,25 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
     addIfExists(minecraft.accessTransformers, target, "src/main/resources/META-INF/accesstransformer.cfg")
 
     minecraft.runs {
+        configureEach {
+            if (name != "data") {
+                val upperName = name.replaceFirstChar { it.uppercase() }
+                rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Forge $upperName") {
+                    taskNames = listOf(":${project.name}:run$upperName")
+                    setProject(project)
+                }
+            }
+        }
+
         register("client") {
             workingDir.set(ext.runDir("client"))
             ext.forgeMixins.get().forEach { mixin -> args("--mixin.config=$mixin") }
-
-            rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Forge Client") {
-                taskNames = listOf(":${project.name}:runClient")
-                setProject(project)
-            }
         }
 
         register("server") {
             workingDir.set(ext.runDir("server"))
             ext.forgeMixins.get().forEach { mixin -> args("--mixin.config=$mixin") }
             args("--nogui")
-
-            rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Forge Server") {
-                taskNames = listOf(":${project.name}:runServer")
-                setProject(project)
-            }
         }
 
         ext.testmodConfig?.let { testmod ->
@@ -111,11 +111,6 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
                     workingDir.set(ext.runDir("client"))
                     configureBootstrapLaunch(client = true)
                     ext.forgeMixins.get().forEach { mixin -> args("--mixin.config=$mixin") }
-
-                    rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Forge Test Client") {
-                        taskNames = listOf(":${project.name}:runTestmodClient")
-                        setProject(project)
-                    }
                 }
             }
 
@@ -125,11 +120,6 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
                     configureBootstrapLaunch(client = false)
                     ext.forgeMixins.get().forEach { mixin -> args("--mixin.config=$mixin") }
                     args("--nogui")
-
-                    rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Forge Test Server") {
-                        taskNames = listOf(":${project.name}:runTestmodServer")
-                        setProject(project)
-                    }
                 }
             }
         }
@@ -140,11 +130,6 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
                 systemProperty("forge.enableGameTest", "True")
                 systemProperty("forge.enableGameTestNamespaces", gametest.modId.get());
                 ext.forgeMixins.get().forEach { mixin -> args("--mixin.config=$mixin") }
-
-                rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Forge Gametest Server") {
-                    taskNames = listOf(":${project.name}:runGameTestServer")
-                    setProject(project)
-                }
             }
 
             // Gradle run will not be registered, since it is only a requirement for the GameTestServer run.
