@@ -18,9 +18,6 @@ object FabricLoom {
 fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target) {
     pluginManager.apply(FabricLoom.PLUGIN_ID)
 
-    rootProject.pluginManager.apply("idea")
-    rootProject.pluginManager.apply("org.jetbrains.gradle.plugin.idea-ext")
-
     val loom = the<LoomGradleExtensionAPI>()
 
     dependencies {

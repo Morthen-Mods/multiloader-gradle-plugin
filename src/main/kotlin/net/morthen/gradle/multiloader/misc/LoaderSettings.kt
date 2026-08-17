@@ -2,12 +2,15 @@ package net.morthen.gradle.multiloader.misc
 
 import net.morthen.gradle.multiloader.api.MultiloaderExtension
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
+import org.gradle.kotlin.dsl.the
 import org.gradle.language.jvm.tasks.ProcessResources
 
 fun applyLoaderSettings(current: Project, ext: MultiloaderExtension) = with(current) {
@@ -52,30 +55,21 @@ fun applyLoaderSettings(current: Project, ext: MultiloaderExtension) = with(curr
             from(commonJava, commonResources)
         }
 
+        // Feature source sets (testmod/gametest) mirror common's same-named source set by adding
+        // its directories directly, rather than merging via task.source()/from() like main does above.
+        // Gradle task.source()/from() additions only take effect when the task actually runs, so
+        // IntelliJ's Gradle sync (which never runs tasks) can't see them and reports the common
+        // classes as unresolved while editing. A real sourceSet.srcDir() is part of the declared
+        // project model, so both javac and the IDE see the same source root.
         fun configureDependencies(sourceSetName: String) {
-            val commonJavaDep = configurations.dependencyScope("${sourceSetName}CommonJavaDep")
-            val commonJava = configurations.resolvable("${sourceSetName}CommonJava") { extendsFrom(commonJavaDep) }
-            val commonResourcesDep = configurations.dependencyScope("${sourceSetName}CommonResourcesDep")
-            val commonResources = configurations.resolvable("${sourceSetName}CommonResources") { extendsFrom(commonResourcesDep) }
+            val sourceSet = the<JavaPluginExtension>().sourceSets[sourceSetName]
+            sourceSet.java.srcDir(current.project(commonProject).file("src/$sourceSetName/java"))
+            sourceSet.resources.srcDir(current.project(commonProject).file("src/$sourceSetName/resources"))
 
             dependencies {
                 "${sourceSetName}CompileOnly"(project(commonProject)) {
                     attributes { attribute(loaderAttribute, "common") }
                 }
-                commonJavaDep(project(commonProject, "${sourceSetName}CommonJava"))
-                commonResourcesDep(project(commonProject, "${sourceSetName}CommonResources"))
-            }
-
-            val capName = sourceSetName.replaceFirstChar(Char::uppercaseChar)
-
-            tasks.named<JavaCompile>("compile${capName}Java").configure {
-                dependsOn(commonJava)
-                source(commonJava)
-            }
-
-            tasks.named<ProcessResources>("process${capName}Resources").configure {
-                dependsOn(commonResources)
-                from(commonResources)
             }
         }
 

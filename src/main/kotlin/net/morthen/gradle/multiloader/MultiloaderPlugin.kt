@@ -32,6 +32,9 @@ abstract class MultiloaderPlugin : Plugin<Project> {
         pluginManager.apply("maven-publish")
         pluginManager.apply("version-catalog")
 
+        rootProject.pluginManager.apply("idea")
+        rootProject.pluginManager.apply("org.jetbrains.gradle.plugin.idea-ext")
+
         applyDefaultRepositories()
 
         val ext = extensions.create<MultiloaderExtension>("multiloader")
