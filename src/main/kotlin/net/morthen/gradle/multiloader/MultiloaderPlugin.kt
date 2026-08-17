@@ -40,7 +40,8 @@ abstract class MultiloaderPlugin : Plugin<Project> {
         javaExt.toolchain.languageVersion.set(JavaLanguageVersion.of(ext.javaVersion.get()))
         javaExt.withSourcesJar()
 
-        base.archivesName.set("${ ext.modId.get() }-${ target.name }-${ ext.minecraftVersion.get() }")
+        project.version = "${ ext.minecraftVersion.get() }-${ project.version }"
+        base.archivesName.set("${ ext.modId.get() }-${ target.name }")
 
         tasks.withType<JavaCompile>().configureEach {
             options.release = ext.javaVersion
