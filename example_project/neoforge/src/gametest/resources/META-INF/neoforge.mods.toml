@@ -1,0 +1,18 @@
+modLoader = "javafml" #mandatory
+loaderVersion = "[4,)" #mandatory
+license = "${mod_license}"
+
+[[mods]]
+    modId = "${mod_id}_gametest"
+    version = "${version}"
+    displayName = "${mod_name} - Gametest"
+    logoFile="${mod_id}.png"
+    authors = "${mod_author}"
+    description = '''${mod_description}'''
+
+[[dependencies.${mod_id}]]
+    modId = "${mod_id}"
+    type="required"
+    versionRange = "[${version},)"
+    ordering = "BEFORE"
+    side = "BOTH"

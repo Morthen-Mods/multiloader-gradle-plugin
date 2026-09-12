@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}_gametest",
+  "version": "${version}",
+  "name": "${mod_name} - Gametest",
+  "description": "${mod_description}",
+  "authors": [ "${mod_author}" ],
+  "license": "${mod_license}",
+  "icon": "${mod_id}.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [ "com.example.example_mod.gametest.GametestMod" ]
+  }
+}

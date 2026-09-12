@@ -30,8 +30,8 @@ fun applyModPublishSettings(current: Project, ext: MultiloaderExtension) = with(
                     accessToken.set(config.curseforgeApi.get())
                     minecraftVersions.add(ext.minecraftVersion.get())
 
-                    client.set(config.client.get())
-                    server.set(config.server.get())
+                    client.set(config.environment.get().client)
+                    server.set(config.environment.get().server)
 
                     config.required.get().forEach { requires(it) }
                     config.optional.get().forEach { optional(it) }
@@ -46,11 +46,7 @@ fun applyModPublishSettings(current: Project, ext: MultiloaderExtension) = with(
                     accessToken.set(config.modrinthApi.get())
                     minecraftVersions.add(ext.minecraftVersion.get())
 
-                    if (config.client.get() && !config.server.get()) {
-                        environment.set(ModrinthEnvironment.CLIENT_ONLY)
-                    } else if (config.server.get() && !config.client.get()) {
-                        environment.set(ModrinthEnvironment.SERVER_ONLY)
-                    }
+                    environment.set(config.environment.get().getModrinthEnv())
 
                     config.required.get().forEach { requires(it) }
                     config.optional.get().forEach { optional(it) }

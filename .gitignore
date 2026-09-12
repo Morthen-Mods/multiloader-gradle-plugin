@@ -43,3 +43,7 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+/example_project/common/runs/
+/example_project/common/src/generated/
+/example_project/forge/src/gametest/generated/
