@@ -6,9 +6,9 @@ idea_ext = "1.4.1"
 
 junit = "6.1.2"
 
-moddevgradle = "2.0.141" # https://projects.neoforged.net/neoforged/moddevgradle
-fabric_loom = "1.17.17" # https://maven.fabricmc.net/net/fabricmc/fabric-loom/net.fabricmc.fabric-loom.gradle.plugin/
-forge_gradle = "7.0.30" # https://maven.minecraftforge.net/net/minecraftforge/gradle/ForgeGradle/ - verify this is still the latest before relying on it
+moddevgradle = "2.0.147" # https://projects.neoforged.net/neoforged/moddevgradle
+fabric_loom = "1.17.20" # https://maven.fabricmc.net/net/fabricmc/fabric-loom/net.fabricmc.fabric-loom.gradle.plugin/
+forge_gradle = "7.0.40" # https://maven.minecraftforge.net/net/minecraftforge/gradle/ForgeGradle/ - verify this is still the latest before relying on it
 mod_publish = "2.2.0"
 
 [libraries]
