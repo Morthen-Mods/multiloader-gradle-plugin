@@ -1,5 +1,5 @@
 [versions]
-kotlin = "2.4.21"
+kotlin = "2.4.10"
 gradle_publishing = "2.2.1"
 idea_ext = "1.4.1"
 
