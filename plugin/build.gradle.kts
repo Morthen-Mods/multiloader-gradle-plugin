@@ -7,6 +7,8 @@ plugins {
     alias(libs.plugins.gradle.publishing)
 }
 
+base.archivesName = "multiloader-gradle-plugin"
+
 repositories {
     mavenCentral()
     gradlePluginPortal()
@@ -34,8 +36,22 @@ dependencies {
     compileOnly(libs.forge.gradle)
 }
 
+// Build with JDK 25, but emit Java 17 bytecode so the plugin runs on Gradle with JVM 17+
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(25))
+}
+
+tasks.withType<JavaCompile>().configureEach {
+    options.release = 17
+}
+
+kotlin {
+    compilerOptions.jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+}
+
+// The compileOnly plugin dependencies are built for newer JVMs; they are only read at compile time and never shipped
+configurations.compileClasspath {
+    attributes.attribute(TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE, 25)
 }
 
 tasks.named<Jar>("jar").configure {
