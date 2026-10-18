@@ -23,10 +23,9 @@ interface LoaderConfigurator {
         fun select(loader: Loader, minecraftVersion: String): LoaderConfigurator? {
             val obf = MinecraftVersion.isObfuscated(minecraftVersion)
             return when (loader) {
-                Loader.COMMON -> null
+                Loader.COMMON, Loader.NEOFORGE -> if (obf) ObfModDevGradle else UnobfModDevGradle
                 Loader.FABRIC -> if (obf) ObfFabricLoom else UnobfFabricLoom
                 Loader.FORGE -> if (obf) ObfForgeGradle else UnobfForgeGradle
-                Loader.NEOFORGE -> if (obf) ObfModDevGradle else UnobfModDevGradle
             }
         }
     }
