@@ -1,5 +1,5 @@
 pluginManagement {
-    includeBuild("../plugin")
+    includeBuild("../../plugin")
     repositories {
         gradlePluginPortal()
         mavenCentral()
@@ -14,10 +14,9 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-rootProject.name = "example"
+rootProject.name = "example-1-20-1"
 
 include("common")
 include("datagen")
 include("fabric")
 include("forge")
-include("neoforge")
