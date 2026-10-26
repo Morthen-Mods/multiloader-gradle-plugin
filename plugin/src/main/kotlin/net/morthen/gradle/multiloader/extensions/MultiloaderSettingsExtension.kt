@@ -1,5 +1,6 @@
 package net.morthen.gradle.multiloader.extensions
 
+import net.morthen.gradle.multiloader.api.Loader
 import net.morthen.gradle.multiloader.api.MinecraftVersion
 import net.morthen.gradle.multiloader.dsl.Gametest
 import net.morthen.gradle.multiloader.dsl.Testmod
@@ -13,11 +14,27 @@ import org.gradle.kotlin.dsl.newInstance
 
 /** Shared settings, configured once in the root project via `multiloaderSettings { }`. */
 abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectFactory, val factory: ProviderFactory, val project: Project) {
-    abstract val modId: Property<String>
+    // Basic
     abstract val minecraftVersion: Property<String>
 
+    // Mod Infos
+    abstract val modId: Property<String>
+    abstract val modName: Property<String>
+    abstract val modAuthor: Property<String>
+    abstract val modLicense: Property<String>
+    abstract val modDescription: Property<String>
+
+    // Mod Loader
+    abstract val neoformVersion: Property<String>
+    abstract val neoforgeVersion: Property<String>
+    abstract val forgeVersion: Property<String>
+    abstract val fabricApiVersion: Property<String>
+    abstract val fabricLoaderVersion: Property<String>
+
+    // Configurations / Settings
     internal var testmod: Testmod? = null
     internal var gametest: Gametest? = null
+    //TODO: implement ModPublish configurations
 
     /** Defaults to the Java version the configured Minecraft version requires. */
     val javaVersion: Property<Int> = objects.property(Int::class.java).convention(
@@ -25,21 +42,32 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
     )
 
     init {
-        modId.convention(factory.gradleProperty("mod_id"))
+        // Basic
         minecraftVersion.convention(factory.gradleProperty("minecraft_version"))
+
+        // ModInfos
+        modId.convention(factory.gradleProperty("mod_id"))
+        modName.convention(factory.gradleProperty("mod_name"))
+        modAuthor.convention(factory.gradleProperty("mod_author"))
+        modLicense.convention(factory.gradleProperty("mod_license"))
+        modDescription.convention(factory.gradleProperty("mod_description"))
+
+        // Mod Loader
+        neoformVersion.convention(factory.gradleProperty("neoform_version"))
+        neoforgeVersion.convention(factory.gradleProperty("neoforge_version"))
+        forgeVersion.convention(factory.gradleProperty("forge_version"))
+        fabricLoaderVersion.convention(factory.gradleProperty("fabric_loader_version"))
+        fabricApiVersion.convention(factory.gradleProperty("fabric_api_version"))
+
     }
 
     fun withTestmod(config: Action<Testmod>? = null) = with(project) {
-        val cfg = objects.newInstance(Testmod::class, this@MultiloaderSettingsExtension)
-        config?.execute(cfg)
-
-        testmod = cfg
+        testmod = objects.newInstance(Testmod::class, this@MultiloaderSettingsExtension)
+            .also { config?.execute(it) }
     }
 
     fun withGametest(config: Action<Gametest>? = null) = with(project) {
-        val cfg = objects.newInstance(Gametest::class, this@MultiloaderSettingsExtension)
-        config?.execute(cfg)
-
-        gametest = cfg
+        gametest = objects.newInstance(Gametest::class, this@MultiloaderSettingsExtension)
+            .also { config?.execute(it) }
     }
 }

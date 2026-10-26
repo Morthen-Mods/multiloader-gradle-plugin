@@ -21,17 +21,16 @@ class MultiloaderPlugin : Plugin<Project> {
         val settings = project.rootProject.extensions.findByType(MultiloaderSettingsExtension::class.java)
             ?: throw GradleException("Apply 'net.morthen.gradle.multiloader' to the root project as well (project ${project.path})")
 
-        val extension = project.extensions.create("multiloader", MultiloaderExtension::class.java)
-        extension.minecraftVersion.convention(settings.minecraftVersion)
-        extension.javaVersion.convention(settings.javaVersion)
+        val ext = project.extensions.create("multiloader", MultiloaderExtension::class.java)
+        ext.settings = settings
 
         project.pluginManager.withPlugin("java") {
             project.extensions.getByType(JavaPluginExtension::class.java)
-                .toolchain.languageVersion.set(extension.javaVersion.map { JavaLanguageVersion.of(it) })
+                .toolchain.languageVersion.set(settings.javaVersion.map { JavaLanguageVersion.of(it) })
         }
 
         project.afterEvaluate {
-            val loader = extension.loader.orNull ?: return@afterEvaluate
+            val loader = ext.loader.get()
 
         }
     }
