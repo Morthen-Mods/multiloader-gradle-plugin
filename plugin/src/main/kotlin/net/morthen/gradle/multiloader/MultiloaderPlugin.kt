@@ -2,7 +2,6 @@ package net.morthen.gradle.multiloader
 
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
-import net.morthen.gradle.multiloader.plugins.LoaderConfigurator
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -33,7 +32,7 @@ class MultiloaderPlugin : Plugin<Project> {
 
         project.afterEvaluate {
             val loader = extension.loader.orNull ?: return@afterEvaluate
-            LoaderConfigurator.select(loader, extension.minecraftVersion.get())?.apply(project)
+
         }
     }
 }
