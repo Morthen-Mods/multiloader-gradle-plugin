@@ -10,5 +10,5 @@ abstract class MultiloaderExtension {
     abstract val loader: Property<Loader>
     abstract val minecraftVersion: Property<String>
     abstract val javaVersion: Property<Int>
-    abstract val runs: NamedDomainObjectContainer<Run>
+    abstract val runs: NamedDomainObjectContainer<Run> //TODO: how do i apply those correctly
 }
