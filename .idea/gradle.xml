@@ -7,14 +7,33 @@
         <compositeConfiguration>
           <compositeBuild compositeDefinitionSource="SCRIPT">
             <builds>
-              <build path="$PROJECT_DIR$/example" name="example">
+              <build path="$PROJECT_DIR$/example/1-20-1" name="example-1-20-1">
                 <projects>
-                  <project path="$PROJECT_DIR$/example" />
-                  <project path="$PROJECT_DIR$/example/common" />
-                  <project path="$PROJECT_DIR$/example/datagen" />
-                  <project path="$PROJECT_DIR$/example/fabric" />
-                  <project path="$PROJECT_DIR$/example/forge" />
-                  <project path="$PROJECT_DIR$/example/neoforge" />
+                  <project path="$PROJECT_DIR$/example/1-20-1" />
+                  <project path="$PROJECT_DIR$/example/1-20-1/common" />
+                  <project path="$PROJECT_DIR$/example/1-20-1/datagen" />
+                  <project path="$PROJECT_DIR$/example/1-20-1/fabric" />
+                  <project path="$PROJECT_DIR$/example/1-20-1/forge" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/example/1-21-1" name="example-1-21-1">
+                <projects>
+                  <project path="$PROJECT_DIR$/example/1-21-1" />
+                  <project path="$PROJECT_DIR$/example/1-21-1/common" />
+                  <project path="$PROJECT_DIR$/example/1-21-1/datagen" />
+                  <project path="$PROJECT_DIR$/example/1-21-1/fabric" />
+                  <project path="$PROJECT_DIR$/example/1-21-1/forge" />
+                  <project path="$PROJECT_DIR$/example/1-21-1/neoforge" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/example/26-1" name="example-26-1">
+                <projects>
+                  <project path="$PROJECT_DIR$/example/26-1" />
+                  <project path="$PROJECT_DIR$/example/26-1/common" />
+                  <project path="$PROJECT_DIR$/example/26-1/datagen" />
+                  <project path="$PROJECT_DIR$/example/26-1/fabric" />
+                  <project path="$PROJECT_DIR$/example/26-1/forge" />
+                  <project path="$PROJECT_DIR$/example/26-1/neoforge" />
                 </projects>
               </build>
               <build path="$PROJECT_DIR$/plugin" name="plugin">
@@ -30,12 +49,23 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/example" />
-            <option value="$PROJECT_DIR$/example/common" />
-            <option value="$PROJECT_DIR$/example/datagen" />
-            <option value="$PROJECT_DIR$/example/fabric" />
-            <option value="$PROJECT_DIR$/example/forge" />
-            <option value="$PROJECT_DIR$/example/neoforge" />
+            <option value="$PROJECT_DIR$/example/1-20-1" />
+            <option value="$PROJECT_DIR$/example/1-20-1/common" />
+            <option value="$PROJECT_DIR$/example/1-20-1/datagen" />
+            <option value="$PROJECT_DIR$/example/1-20-1/fabric" />
+            <option value="$PROJECT_DIR$/example/1-20-1/forge" />
+            <option value="$PROJECT_DIR$/example/1-21-1" />
+            <option value="$PROJECT_DIR$/example/1-21-1/common" />
+            <option value="$PROJECT_DIR$/example/1-21-1/datagen" />
+            <option value="$PROJECT_DIR$/example/1-21-1/fabric" />
+            <option value="$PROJECT_DIR$/example/1-21-1/forge" />
+            <option value="$PROJECT_DIR$/example/1-21-1/neoforge" />
+            <option value="$PROJECT_DIR$/example/26-1" />
+            <option value="$PROJECT_DIR$/example/26-1/common" />
+            <option value="$PROJECT_DIR$/example/26-1/datagen" />
+            <option value="$PROJECT_DIR$/example/26-1/fabric" />
+            <option value="$PROJECT_DIR$/example/26-1/forge" />
+            <option value="$PROJECT_DIR$/example/26-1/neoforge" />
             <option value="$PROJECT_DIR$/plugin" />
           </set>
         </option>

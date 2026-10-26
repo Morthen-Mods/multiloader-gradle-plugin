@@ -33,6 +33,7 @@ dependencies {
 
     compileOnly(libs.moddevgradle)
     compileOnly(libs.fabric.loom)
+    compileOnly(libs.fabric.loom.remap)
     compileOnly(libs.forge.gradle)
 }
 

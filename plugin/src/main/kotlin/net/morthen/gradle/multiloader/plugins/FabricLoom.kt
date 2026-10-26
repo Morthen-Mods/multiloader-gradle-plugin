@@ -18,21 +18,21 @@ object FabricLoom {
 }
 
 fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target){
-    val obfuscated = MinecraftVersion.isObfuscated(ext.minecraftVersion.get())
+    val obfuscated = MinecraftVersion.isObfuscated(ext.settings.minecraftVersion.get())
     pluginManager.apply(FabricLoom.get(obfuscated))
 
     val loom = the<LoomGradleExtensionAPI>()
 
     val implement = if (obfuscated) "modImplementation" else "implementation"
     dependencies {
-        "minecraft"("com.mojang.minecraft:${ ext.minecraftVersion.get() }")
+        "minecraft"("com.mojang.minecraft:${ ext.settings.minecraftVersion.get() }")
         if (obfuscated) "mappings"(loom.officialMojangMappings())
-        implement("net.fabricmc.fabric-api:fabric-api:${ ext.fabricApiVersion.get() }")
-        implement("net.fabricmc:fabric-loader:${ ext.fabricLoaderVersion.get() }")
+        implement("net.fabricmc.fabric-api:fabric-api:${ ext.settings.fabricApiVersion.get() }")
+        implement("net.fabricmc:fabric-loader:${ ext.settings.fabricLoaderVersion.get() }")
     }
 
     loom.accessWidenerPath.convention(provider {
-        val fileName = "${ ext.modId.get() }.classtweaker"
+        val fileName = "${ ext.settings.modId.get() }.classtweaker"
 
         listOf(target, project(":common"))
             .flatMap { it.the(JavaPluginExtension::class).sourceSets["main"].resources.sourceDirectories.files }
@@ -52,17 +52,17 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target){
     }
 
     loom.mods {
-        create(ext.modId.get()) {
+        create(ext.settings.modId.get()) {
             sourceSet("main")
         }
 
-        ext.testmod?.let {
+        ext.settings.testmod?.let {
             create(it.modId.get()) {
                 sourceSet(it.sourceSetName.get())
             }
         }
 
-        ext.gametest?.let {
+        ext.settings.gametest?.let {
             create(it.modId.get()) {
                 sourceSet(it.sourceSetName.get())
             }
