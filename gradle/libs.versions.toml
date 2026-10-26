@@ -6,7 +6,7 @@ idea_ext = "1.4.1"
 junit = "6.1.3"
 
 moddevgradle = "2.0.148" # https://projects.neoforged.net/neoforged/moddevgradle
-fabric_loom = "1.19.1" # https://maven.fabricmc.net/net/fabricmc/fabric-loom/net.fabricmc.fabric-loom-remap.gradle.plugin/
+fabric_loom = "1.19.3" # https://maven.fabricmc.net/net/fabricmc/fabric-loom/net.fabricmc.fabric-loom-remap.gradle.plugin/
 forge_gradle = "7.0.40" # https://maven.minecraftforge.net/net/minecraftforge/gradle/ForgeGradle/ - verify this is still the latest before relying on it
 mod_publish = "2.2.1"
 
@@ -14,7 +14,7 @@ mod_publish = "2.2.1"
 
 moddevgradle = { module = "net.neoforged.moddev:net.neoforged.moddev.gradle.plugin", version.ref = "moddevgradle" }
 fabric_loom = { module = "net.fabricmc.fabric-loom:net.fabricmc.fabric-loom.gradle.plugin", version.ref = "fabric_loom" }
-fabric_loom_remap = { module = "net.fabricmc.fabric-loom:net.fabricmc.fabric-loom-remap.gradle.plugin", version.ref = "fabric_loom" }
+fabric_loom_remap = { module = "net.fabricmc.fabric-loom-remap:net.fabricmc.fabric-loom-remap.gradle.plugin", version.ref = "fabric_loom" }
 forge_gradle = { module = "net.minecraftforge.gradle:net.minecraftforge.gradle.gradle.plugin", version.ref = "forge_gradle" }
 idea_ext = { module = "org.jetbrains.gradle.plugin.idea-ext:org.jetbrains.gradle.plugin.idea-ext.gradle.plugin", version.ref = "idea_ext" }
 mod_publish = { module = "me.modmuss50.mod-publish-plugin:me.modmuss50.mod-publish-plugin.gradle.plugin", version.ref = "mod_publish" }
