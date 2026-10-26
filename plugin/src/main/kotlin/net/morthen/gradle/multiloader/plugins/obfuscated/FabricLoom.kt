@@ -7,6 +7,8 @@ object FabricLoom : LoaderConfigurator {
     private const val PLUGIN_ID = "net.fabricmc.fabric-loom-remap"
 
     override fun apply(project: Project) {
-        project.pluginManager.apply(PLUGIN_ID)
+//        project.pluginManager.apply(PLUGIN_ID)
+
+        println("[Fabric Loom | Obfuscated] Applied version ${project.version}")
     }
 }

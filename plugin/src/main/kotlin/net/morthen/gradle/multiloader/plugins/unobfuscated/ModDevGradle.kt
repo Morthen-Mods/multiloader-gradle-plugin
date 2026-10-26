@@ -7,6 +7,8 @@ object ModDevGradle : LoaderConfigurator {
     private const val PLUGIN_ID = "net.neoforged.moddev"
 
     override fun apply(project: Project) {
-        project.pluginManager.apply(PLUGIN_ID)
+//        project.pluginManager.apply(PLUGIN_ID)
+
+        println("[Mod Dev] Applied version ${project.version}")
     }
 }

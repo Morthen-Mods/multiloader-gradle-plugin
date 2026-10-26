@@ -6,9 +6,11 @@ import org.gradle.api.Project
 import net.morthen.gradle.multiloader.plugins.obfuscated.FabricLoom as ObfFabricLoom
 import net.morthen.gradle.multiloader.plugins.obfuscated.ForgeGradle as ObfForgeGradle
 import net.morthen.gradle.multiloader.plugins.obfuscated.ModDevGradle as ObfModDevGradle
+import net.morthen.gradle.multiloader.plugins.obfuscated.ModDevDataGradle as ObfModDevDataGradle
 import net.morthen.gradle.multiloader.plugins.unobfuscated.FabricLoom as UnobfFabricLoom
 import net.morthen.gradle.multiloader.plugins.unobfuscated.ForgeGradle as UnobfForgeGradle
 import net.morthen.gradle.multiloader.plugins.unobfuscated.ModDevGradle as UnobfModDevGradle
+import net.morthen.gradle.multiloader.plugins.unobfuscated.ModDevDataGradle as UnobfModDevDataGradle
 
 /**
  * Applies and configures the third party loader plugin for a project.
@@ -24,6 +26,7 @@ interface LoaderConfigurator {
             val obf = MinecraftVersion.isObfuscated(minecraftVersion)
             return when (loader) {
                 Loader.COMMON, Loader.NEOFORGE -> if (obf) ObfModDevGradle else UnobfModDevGradle
+                Loader.DATAGEN -> if (obf) ObfModDevDataGradle else UnobfModDevDataGradle
                 Loader.FABRIC -> if (obf) ObfFabricLoom else UnobfFabricLoom
                 Loader.FORGE -> if (obf) ObfForgeGradle else UnobfForgeGradle
             }

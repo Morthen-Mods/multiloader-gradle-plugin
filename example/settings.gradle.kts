@@ -1,5 +1,13 @@
 pluginManagement {
     includeBuild("../plugin")
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+
+        maven("https://maven.neoforged.net/releases")
+        maven("https://maven.minecraftforge.net")
+        maven("https://maven.fabricmc.net")
+    }
 }
 
 plugins {
@@ -7,3 +15,9 @@ plugins {
 }
 
 rootProject.name = "example"
+
+include("common")
+include("datagen")
+include("fabric")
+include("forge")
+include("neoforge")

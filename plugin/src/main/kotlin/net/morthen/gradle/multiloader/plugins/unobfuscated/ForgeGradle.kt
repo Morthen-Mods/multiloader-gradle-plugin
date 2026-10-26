@@ -7,6 +7,8 @@ object ForgeGradle : LoaderConfigurator {
     private const val PLUGIN_ID = "net.minecraftforge.gradle"
 
     override fun apply(project: Project) {
-        project.pluginManager.apply(PLUGIN_ID)
+//        project.pluginManager.apply(PLUGIN_ID)
+
+        println("[Forge Gradle] Applied version ${project.version}")
     }
 }

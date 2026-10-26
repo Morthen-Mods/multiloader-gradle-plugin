@@ -10,6 +10,11 @@
               <build path="$PROJECT_DIR$/example" name="example">
                 <projects>
                   <project path="$PROJECT_DIR$/example" />
+                  <project path="$PROJECT_DIR$/example/common" />
+                  <project path="$PROJECT_DIR$/example/datagen" />
+                  <project path="$PROJECT_DIR$/example/fabric" />
+                  <project path="$PROJECT_DIR$/example/forge" />
+                  <project path="$PROJECT_DIR$/example/neoforge" />
                 </projects>
               </build>
               <build path="$PROJECT_DIR$/plugin" name="plugin">
@@ -21,14 +26,19 @@
           </compositeBuild>
         </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
+        <option name="gradleJvm" value="25" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/example" />
+            <option value="$PROJECT_DIR$/example/common" />
+            <option value="$PROJECT_DIR$/example/datagen" />
+            <option value="$PROJECT_DIR$/example/fabric" />
+            <option value="$PROJECT_DIR$/example/forge" />
+            <option value="$PROJECT_DIR$/example/neoforge" />
             <option value="$PROJECT_DIR$/plugin" />
           </set>
         </option>
-        <option name="myGradleHome" value="" />
       </GradleProjectSettings>
     </option>
   </component>
