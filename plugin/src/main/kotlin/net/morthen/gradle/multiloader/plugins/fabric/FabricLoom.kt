@@ -51,6 +51,7 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target){
         implement("net.fabricmc:fabric-loader:${ ext.settings.fabricLoaderVersion.get() }")
     }
 
+    //TODO: make accessWidener File a Property in MulitloaderSettingsExtension
     loom.accessWidenerPath.convention(provider {
         val fileName = "${ ext.settings.modId.get() }.classtweaker"
 
