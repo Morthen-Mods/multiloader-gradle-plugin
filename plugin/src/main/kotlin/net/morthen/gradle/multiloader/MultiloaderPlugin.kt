@@ -20,6 +20,9 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 
 class MultiloaderPlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        val mc = project.providers.gradleProperty("minecraft_version").get()
+        MinecraftVersion.checkSupport(mc)
+
         if (project == project.rootProject) {
             project.extensions.create("multiloaderSettings", MultiloaderSettingsExtension::class.java)
         } else {
