@@ -18,6 +18,12 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.plugins.ide.idea.model.IdeaModel
 
+// TODO:    - create boilerplate mods to test dependencies and runs
+//          - implement proper common run creation/handling
+//          - implement common connection to fabric/datagen/forge/neoforge
+//          - implement devLogin for client runs - native in neoforge -- Needs a big disclaimer in README because tokens are not encrypted
+//          - more to come
+
 class MultiloaderPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.pluginManager.apply("idea")
@@ -36,7 +42,6 @@ class MultiloaderPlugin : Plugin<Project> {
     private fun applyToSubproject(project: Project) {
         val settings = project.rootProject.extensions.findByType(MultiloaderSettingsExtension::class.java)
             ?: throw GradleException("Apply 'net.morthen.gradle.multiloader' to the root project as well (project ${project.path})")
-
 
         project.pluginManager.apply("idea")
         project.pluginManager.apply("org.jetbrains.gradle.plugin.idea-ext")
