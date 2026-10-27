@@ -25,7 +25,7 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target){
 
     val implement = if (obfuscated) "modImplementation" else "implementation"
     dependencies {
-        "minecraft"("com.mojang.minecraft:${ ext.settings.minecraftVersion.get() }")
+        "minecraft"("com.mojang:minecraft:${ ext.settings.minecraftVersion.get() }")
         if (obfuscated) "mappings"(loom.officialMojangMappings())
         implement("net.fabricmc.fabric-api:fabric-api:${ ext.settings.fabricApiVersion.get() }")
         implement("net.fabricmc:fabric-loader:${ ext.settings.fabricLoaderVersion.get() }")

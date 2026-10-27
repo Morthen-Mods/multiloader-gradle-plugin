@@ -53,11 +53,11 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
         modDescription.convention(factory.gradleProperty("mod_description"))
 
         // Mod Loader
-        neoformVersion.convention(factory.gradleProperty("neoform_version"))
-        neoforgeVersion.convention(factory.gradleProperty("neoforge_version"))
-        forgeVersion.convention(factory.gradleProperty("forge_version"))
-        fabricLoaderVersion.convention(factory.gradleProperty("fabric_loader_version"))
-        fabricApiVersion.convention(factory.gradleProperty("fabric_api_version"))
+        neoformVersion.convention(factory.gradleProperty("neoform"))
+        neoforgeVersion.convention(factory.gradleProperty("neoforge"))
+        forgeVersion.convention(factory.gradleProperty("forge"))
+        fabricLoaderVersion.convention(factory.gradleProperty("fabric_loader"))
+        fabricApiVersion.convention(factory.gradleProperty("fabric_api"))
 
     }
 

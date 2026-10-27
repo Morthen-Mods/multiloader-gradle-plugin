@@ -1,7 +1,9 @@
 package net.morthen.gradle.multiloader
 
+import net.morthen.gradle.multiloader.api.Loader
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
+import net.morthen.gradle.multiloader.plugins.applyFabricLoom
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -24,14 +26,14 @@ class MultiloaderPlugin : Plugin<Project> {
         val ext = project.extensions.create("multiloader", MultiloaderExtension::class.java)
         ext.settings = settings
 
-        project.pluginManager.withPlugin("java") {
-            project.extensions.getByType(JavaPluginExtension::class.java)
-                .toolchain.languageVersion.set(settings.javaVersion.map { JavaLanguageVersion.of(it) })
-        }
+        project.pluginManager.apply("java")
+        project.extensions.getByType(JavaPluginExtension::class.java)
+            .toolchain.languageVersion.set(settings.javaVersion.map { JavaLanguageVersion.of(it) })
 
         project.afterEvaluate {
             val loader = ext.loader.get()
 
+            if (loader == Loader.FABRIC) applyFabricLoom(project, ext)
         }
     }
 }
