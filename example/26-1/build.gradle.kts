@@ -10,11 +10,6 @@ plugins {
     id("me.modmuss50.mod-publish-plugin") version "2.2.1" apply false
 }
 
-subprojects {
-    pluginManager.apply("idea")
-    idea.module.isDownloadSources = true
-}
-
 multiloaderSettings {
 
 }
