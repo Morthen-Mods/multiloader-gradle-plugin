@@ -5,8 +5,8 @@ import net.morthen.gradle.multiloader.api.MinecraftVersion
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
 import net.morthen.gradle.multiloader.plugins.applyCommonModDev
-import net.morthen.gradle.multiloader.plugins.applyFabricLoom
-import net.morthen.gradle.multiloader.plugins.applyFabricLoomDatagen
+import net.morthen.gradle.multiloader.plugins.fabric.applyFabricLoom
+import net.morthen.gradle.multiloader.plugins.fabric.applyFabricLoomDatagen
 import net.morthen.gradle.multiloader.plugins.applyForgeGradle
 import net.morthen.gradle.multiloader.plugins.applyLegacyCommon
 import net.morthen.gradle.multiloader.plugins.applyModDev

@@ -2,8 +2,10 @@ package net.morthen.gradle.multiloader.extensions
 
 import net.morthen.gradle.multiloader.api.MinecraftVersion
 import net.morthen.gradle.multiloader.dsl.Gametest
+import net.morthen.gradle.multiloader.dsl.Run
 import net.morthen.gradle.multiloader.dsl.Testmod
 import org.gradle.api.Action
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -34,6 +36,9 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
     internal var testmod: Testmod? = null
     internal var gametest: Gametest? = null
     //TODO: implement ModPublish configurations
+
+    // Run Configurations
+    abstract val runs: NamedDomainObjectContainer<Run>
 
     /** Defaults to the Java version the configured Minecraft version requires. */
     val javaVersion: Property<Int> = objects.property(Int::class.java).convention(
