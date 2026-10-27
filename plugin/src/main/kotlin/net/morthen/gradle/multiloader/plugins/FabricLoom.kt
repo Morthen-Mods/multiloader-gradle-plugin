@@ -19,6 +19,19 @@ object FabricLoom {
     }
 }
 
+fun applyFabricLoomDatagen(target: Project, ext: MultiloaderExtension) = with(target) {
+    pluginManager.apply(FabricLoom.PLUGIN_REMAP_ID)
+
+    val loom = the<LoomGradleExtensionAPI>()
+
+    dependencies {
+        "minecraft"("com.mojang:minecraft:${ ext.settings.minecraftVersion.get() }")
+        "mappings"(loom.officialMojangMappings())
+        "modImplementation"("net.fabricmc.fabric-api:fabric-api:${ ext.settings.fabricApiVersion.get() }")
+        "modImplementation"("net.fabricmc:fabric-loader:${ ext.settings.fabricLoaderVersion.get() }")
+    }
+}
+
 fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target){
     val obfuscated = MinecraftVersion.isObfuscated(ext.settings.minecraftVersion.get())
     pluginManager.apply(FabricLoom.get(obfuscated))

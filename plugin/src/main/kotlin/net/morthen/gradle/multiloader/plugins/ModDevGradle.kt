@@ -41,3 +41,11 @@ fun applyModDev(target: Project, ext: MultiloaderExtension) = with(target) {
         version = ext.settings.neoforgeVersion.get()
     }
 }
+
+fun applyModDevDatagen(target: Project, ext: MultiloaderExtension) = with(target) {
+    pluginManager.apply(ModDevGradle.PLUGIN_ID)
+
+    extensions.configure<NeoForgeExtension> {
+        version = ext.settings.neoforgeVersion.get()
+    }
+}

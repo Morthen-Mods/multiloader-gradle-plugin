@@ -6,8 +6,10 @@ import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
 import net.morthen.gradle.multiloader.plugins.applyCommonModDev
 import net.morthen.gradle.multiloader.plugins.applyFabricLoom
+import net.morthen.gradle.multiloader.plugins.applyFabricLoomDatagen
 import net.morthen.gradle.multiloader.plugins.applyLegacyCommon
 import net.morthen.gradle.multiloader.plugins.applyModDev
+import net.morthen.gradle.multiloader.plugins.applyModDevDatagen
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -56,6 +58,10 @@ class MultiloaderPlugin : Plugin<Project> {
                 Loader.NEOFORGE -> {
                     if (legacy) throw GradleException("NeoForge does not support Minecraft $mc")
                     else applyModDev(project, ext)
+                }
+                Loader.DATAGEN -> {
+                    if (legacy) applyFabricLoomDatagen(project, ext)
+                    else applyModDevDatagen(project, ext)
                 }
                 else -> println("Loader not implemented yet")
             }
