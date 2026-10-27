@@ -23,3 +23,4 @@ These rules apply to every AI assistant working in this project.
 - The assistant may create and edit files in `docs/` without asking.
 - Results of research and analysis are **always saved as a Markdown file in `docs/`**. A reply in chat alone is not enough.
 - The chat reply then contains a short summary and a pointer to the file.
+- Exception: simple, quick questions that need no long explanation are answered in the console only, without a Markdown file.
