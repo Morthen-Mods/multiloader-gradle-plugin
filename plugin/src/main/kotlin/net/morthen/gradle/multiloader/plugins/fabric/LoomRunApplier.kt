@@ -23,7 +23,7 @@ class LoomRunApplier(private val loom: LoomGradleExtensionAPI): RunApplier {
         cfg.sourceSet.set(run.sourceSetName)
 
         // System and JVM Settings
-        cfg.runDirectory.set(run.runDirectory)
+        run.runDirectory.orNull?.let { cfg.runDirectory.set(it) }
         cfg.programArguments.addAll(run.programArgs)
         cfg.jvmArguments.addAll(run.jvmArgs)
         cfg.systemProperties.putAll(run.systemProperties)
