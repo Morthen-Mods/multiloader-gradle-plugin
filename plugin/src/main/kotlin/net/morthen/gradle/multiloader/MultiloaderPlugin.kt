@@ -4,13 +4,13 @@ import net.morthen.gradle.multiloader.api.Loader
 import net.morthen.gradle.multiloader.api.MinecraftVersion
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
-import net.morthen.gradle.multiloader.plugins.applyCommonModDev
+import net.morthen.gradle.multiloader.plugins.neoforge.applyCommonModDev
 import net.morthen.gradle.multiloader.plugins.fabric.applyFabricLoom
 import net.morthen.gradle.multiloader.plugins.fabric.applyFabricLoomDatagen
 import net.morthen.gradle.multiloader.plugins.applyForgeGradle
-import net.morthen.gradle.multiloader.plugins.applyLegacyCommon
-import net.morthen.gradle.multiloader.plugins.applyModDev
-import net.morthen.gradle.multiloader.plugins.applyModDevDatagen
+import net.morthen.gradle.multiloader.plugins.neoforge.applyLegacyCommon
+import net.morthen.gradle.multiloader.plugins.neoforge.applyModDev
+import net.morthen.gradle.multiloader.plugins.neoforge.applyModDevDatagen
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -20,6 +20,9 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 
 class MultiloaderPlugin : Plugin<Project> {
     override fun apply(project: Project) {
+        project.pluginManager.apply("idea")
+        project.pluginManager.apply("org.jetbrains.gradle.plugin.idea-ext")
+
         val mc = project.providers.gradleProperty("minecraft_version").get()
         MinecraftVersion.checkSupport(mc)
 
@@ -33,6 +36,10 @@ class MultiloaderPlugin : Plugin<Project> {
     private fun applyToSubproject(project: Project) {
         val settings = project.rootProject.extensions.findByType(MultiloaderSettingsExtension::class.java)
             ?: throw GradleException("Apply 'net.morthen.gradle.multiloader' to the root project as well (project ${project.path})")
+
+
+        project.pluginManager.apply("idea")
+        project.pluginManager.apply("org.jetbrains.gradle.plugin.idea-ext")
 
         val ext = project.extensions.create("multiloader", MultiloaderExtension::class.java)
         ext.settings = settings
