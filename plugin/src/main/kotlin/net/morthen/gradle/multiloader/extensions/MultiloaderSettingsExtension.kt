@@ -1,16 +1,15 @@
 package net.morthen.gradle.multiloader.extensions
 
-import net.morthen.gradle.multiloader.api.Loader
 import net.morthen.gradle.multiloader.api.MinecraftVersion
 import net.morthen.gradle.multiloader.dsl.Gametest
 import net.morthen.gradle.multiloader.dsl.Testmod
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.provider.Property
-import javax.inject.Inject
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.newInstance
+import javax.inject.Inject
 
 /** Shared settings, configured once in the root project via `multiloaderSettings { }`. */
 abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectFactory, val factory: ProviderFactory, val project: Project) {
@@ -58,7 +57,6 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
         forgeVersion.convention(factory.gradleProperty("forge"))
         fabricLoaderVersion.convention(factory.gradleProperty("fabric_loader"))
         fabricApiVersion.convention(factory.gradleProperty("fabric_api"))
-
     }
 
     fun withTestmod(config: Action<Testmod>? = null) = with(project) {
