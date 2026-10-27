@@ -9,6 +9,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.plugins.ide.idea.model.IdeaModel
 
 class MultiloaderPlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -26,9 +27,16 @@ class MultiloaderPlugin : Plugin<Project> {
         val ext = project.extensions.create("multiloader", MultiloaderExtension::class.java)
         ext.settings = settings
 
+        // Base Java settings
         project.pluginManager.apply("java")
         project.extensions.getByType(JavaPluginExtension::class.java)
             .toolchain.languageVersion.set(settings.javaVersion.map { JavaLanguageVersion.of(it) })
+
+        // Idea settings to download sources and javadoc
+        project.pluginManager.apply("idea")
+        val idea = project.extensions.getByType(IdeaModel::class.java)
+        idea.module.isDownloadSources = true
+        idea.module.isDownloadJavadoc = true
 
         project.afterEvaluate {
             val loader = ext.loader.get()
