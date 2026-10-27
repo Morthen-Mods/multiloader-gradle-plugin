@@ -11,6 +11,10 @@ object ModDevGradle {
     const val PLUGIN_LEGACY_ID = "net.neoforged.moddev.legacyforge"
 }
 
+//TODO: - implement run configuration
+//      - implement common project connections
+//      -
+
 // Used from 1.20.2 and beyond with neoform
 fun applyCommonModDev(target: Project, ext: MultiloaderExtension) = with(target) {
     pluginManager.apply(ModDevGradle.PLUGIN_ID)
