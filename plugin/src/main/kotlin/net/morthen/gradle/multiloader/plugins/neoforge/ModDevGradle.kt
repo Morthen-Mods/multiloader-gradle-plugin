@@ -70,8 +70,8 @@ fun applyModDev(target: Project, ext: MultiloaderExtension) = with(target) {
 
                 val upperName = name.replaceFirstChar { it.uppercase() }
                 rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("NeoForge $upperName") {
-                    taskNames = listOf(":${project.name}:run$upperName")
-                    setProject(project)
+                    taskNames = listOf(":${target.name}:run$upperName")
+                    setProject(target)
                 }
             }
         }
