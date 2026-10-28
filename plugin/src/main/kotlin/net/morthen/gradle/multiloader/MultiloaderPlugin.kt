@@ -21,7 +21,10 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.plugins.ide.idea.model.IdeaModel
 
-// TODO:    - implement devLogin for client runs - native in neoforge -- Needs a big disclaimer in README because tokens are not encrypted
+// TODO:    - Implement placeholder replacement in ProcessResource Task
+//          - Implement Maven Publish
+//          - implement devLogin for client runs - native in neoforge -- Needs a big disclaimer in README because tokens are not encrypted
+//          - implement ModPublish abstraction
 //          - more to come
 
 class MultiloaderPlugin : Plugin<Project> {
