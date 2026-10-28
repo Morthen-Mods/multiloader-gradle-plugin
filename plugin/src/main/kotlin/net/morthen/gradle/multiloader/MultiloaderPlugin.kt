@@ -6,19 +6,21 @@ import net.morthen.gradle.multiloader.conventions.applyCompileSettings
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
-import net.morthen.gradle.multiloader.plugins.neoforge.applyCommonModDev
 import net.morthen.gradle.multiloader.plugins.fabric.applyFabricLoom
 import net.morthen.gradle.multiloader.plugins.fabric.applyFabricLoomDatagen
 import net.morthen.gradle.multiloader.plugins.forge.applyForgeGradle
+import net.morthen.gradle.multiloader.plugins.neoforge.applyCommonModDev
 import net.morthen.gradle.multiloader.plugins.neoforge.applyLegacyCommon
 import net.morthen.gradle.multiloader.plugins.neoforge.applyModDev
 import net.morthen.gradle.multiloader.plugins.neoforge.applyModDevDatagen
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.kotlin.dsl.get
 import org.gradle.plugins.ide.idea.model.IdeaModel
 
 // TODO:    - Implement placeholder replacement in ProcessResource Task
@@ -107,6 +109,13 @@ class MultiloaderPlugin : Plugin<Project> {
                     if (legacy) applyFabricLoomDatagen(project, ext)
                     else applyModDevDatagen(project, ext)
                 }
+            }
+
+            // Prevent Testmod and gametest from being published and added as a module to the main source
+            val javaComponent = components["java"] as AdhocComponentWithVariants
+            listOfNotNull(settings.testmod?.sourceSet?.get(), settings.gametest?.sourceSet?.get()).forEach { sourceSetName ->
+                javaComponent.withVariantsFromConfiguration(configurations["${sourceSetName}ApiElements"]) { skip() }
+                javaComponent.withVariantsFromConfiguration(configurations["${sourceSetName}RuntimeElements"]) { skip() }
             }
         }
     }

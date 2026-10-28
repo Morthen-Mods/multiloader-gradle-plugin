@@ -4,13 +4,11 @@ import net.minecraftforge.gradle.ForgeGradleExtension
 import net.minecraftforge.gradle.MinecraftExtension
 import net.minecraftforge.gradle.MinecraftExtensionForProject
 import net.minecraftforge.gradle.SlimeLauncherOptions
-import net.morthen.gradle.multiloader.api.registerGradleRun
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.repositories
-import org.gradle.kotlin.dsl.the
+import org.gradle.api.tasks.JavaExec
+import org.gradle.kotlin.dsl.*
 
 object ForgeGradle {
     const val PLUGIN_ID = "net.minecraftforge.gradle"
@@ -66,5 +64,17 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
         val dir = layout.buildDirectory.dir("sourcesSets/$name")
         output.setResourcesDir(dir.get())
         getJava().destinationDirectory.set(dir)
+    }
+
+    // Put testmod source output to the classpath for the run
+    // Since Forge only loads the main and test sourceSet for the run
+    // TODO: implement for gametest
+    afterEvaluate {
+        ext.settings.testmod?.let { cfg ->
+            val output = java.sourceSets[cfg.sourceSet.get()].output
+            val upperName = cfg.sourceSet.get().replaceFirstChar { it.uppercase() }
+            if (cfg.clientRun.get()) tasks.named<JavaExec>("run${upperName}Client") { classpath(output) }
+            if (cfg.serverRun.get()) tasks.named<JavaExec>("run${upperName}Server") { classpath(output) }
+        }
     }
 }
