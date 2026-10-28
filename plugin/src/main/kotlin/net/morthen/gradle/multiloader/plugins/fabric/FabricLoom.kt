@@ -19,6 +19,7 @@ object FabricLoom {
     }
 }
 
+// TODO: start proper implementation
 fun applyFabricLoomDatagen(target: Project, ext: MultiloaderExtension) = with(target) {
     pluginManager.apply(FabricLoom.PLUGIN_REMAP_ID)
     applyGradleConvention("fabric")

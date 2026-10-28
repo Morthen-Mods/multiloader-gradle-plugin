@@ -1,6 +1,5 @@
 package net.morthen.gradle.multiloader.plugins.neoforge
 
-import net.morthen.gradle.multiloader.api.registerGradleRun
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
@@ -15,9 +14,6 @@ object ModDevGradle {
     const val PLUGIN_ID = "net.neoforged.moddev"
     const val PLUGIN_LEGACY_ID = "net.neoforged.moddev.legacyforge"
 }
-
-//TODO: - implement run configuration
-//      - implement common project connections
 
 private fun outgoingConfig(target: Project) = with(target) {
     afterEvaluate {
@@ -88,6 +84,7 @@ fun applyModDev(target: Project, ext: MultiloaderExtension) = with(target) {
     }
 }
 
+//TODO: start proper implementation
 fun applyModDevDatagen(target: Project, ext: MultiloaderExtension) = with(target) {
     pluginManager.apply(ModDevGradle.PLUGIN_ID)
     applyGradleConvention("neoforge")
