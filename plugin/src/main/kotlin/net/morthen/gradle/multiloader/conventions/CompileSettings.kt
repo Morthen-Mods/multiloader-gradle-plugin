@@ -68,11 +68,11 @@ fun applyCompileSettings(target: Project, ext: MultiloaderExtension) = with(targ
         }
 
         ext.settings.testmod?.let {
-            configureDependencies(it.sourceSetName.get())
+            configureDependencies(it.sourceSet.get())
         }
 
         ext.settings.gametest?.let {
-            configureDependencies(it.sourceSetName.get())
+            configureDependencies(it.sourceSet.get())
         }
     }
 }

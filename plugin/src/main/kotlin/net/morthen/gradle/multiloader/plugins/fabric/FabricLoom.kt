@@ -76,13 +76,13 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target){
 
         ext.settings.testmod?.let {
             create(it.modId.get()) {
-                sourceSet(it.sourceSetName.get())
+                sourceSet(it.sourceSet.get())
             }
         }
 
         ext.settings.gametest?.let {
             create(it.modId.get()) {
-                sourceSet(it.sourceSetName.get())
+                sourceSet(it.sourceSet.get())
             }
         }
     }

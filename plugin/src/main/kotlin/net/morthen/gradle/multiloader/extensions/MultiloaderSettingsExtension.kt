@@ -1,9 +1,8 @@
 package net.morthen.gradle.multiloader.extensions
 
 import net.morthen.gradle.multiloader.api.MinecraftVersion
-import net.morthen.gradle.multiloader.dsl.Gametest
+import net.morthen.gradle.multiloader.dsl.CustomSource
 import net.morthen.gradle.multiloader.dsl.Run
-import net.morthen.gradle.multiloader.dsl.Testmod
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
@@ -11,11 +10,11 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.newInstance
-import java.io.File
 import javax.inject.Inject
 
 /** Shared settings, configured once in the root project via `multiloaderSettings { }`. */
-abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectFactory, val factory: ProviderFactory, val project: Project) {
+abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectFactory, factory: ProviderFactory, val project: Project) {
+
     // Basic
     abstract val minecraftVersion: Property<String>
     abstract val commonRunDirectory: Property<Boolean>
@@ -35,8 +34,8 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
     abstract val fabricLoaderVersion: Property<String>
 
     // Configurations / Settings
-    internal var testmod: Testmod? = null
-    internal var gametest: Gametest? = null
+    internal var testmod: CustomSource? = null
+    internal var gametest: CustomSource? = null
     //TODO: implement ModPublish configurations
 
     // Run Configurations
@@ -67,13 +66,13 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
         fabricApiVersion.convention(factory.gradleProperty("fabric_api"))
     }
 
-    fun withTestmod(config: Action<Testmod>? = null) = with(project) {
-        testmod = objects.newInstance(Testmod::class, this@MultiloaderSettingsExtension)
+    fun withTestmod(config: Action<CustomSource>? = null) = with(project) {
+        testmod = objects.newInstance(CustomSource::class, this@MultiloaderSettingsExtension, "testmod")
             .also { config?.execute(it) }
     }
 
-    fun withGametest(config: Action<Gametest>? = null) = with(project) {
-        gametest = objects.newInstance(Gametest::class, this@MultiloaderSettingsExtension)
+    fun withGametest(config: Action<CustomSource>? = null) = with(project) {
+        gametest = objects.newInstance(CustomSource::class, this@MultiloaderSettingsExtension, "gametest")
             .also { config?.execute(it) }
     }
 }

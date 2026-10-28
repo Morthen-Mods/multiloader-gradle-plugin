@@ -65,11 +65,11 @@ fun applyModDev(target: Project, ext: MultiloaderExtension) = with(target) {
         runs {
             mods.create(ext.settings.modId.get()) { sourceSet(java.sourceSets["main"]) }
             ext.settings.testmod?.let {
-                mods.create(it.modId.get()) { sourceSet(java.sourceSets[it.sourceSetName.get()]) }
+                mods.create(it.modId.get()) { sourceSet(java.sourceSets[it.sourceSet.get()]) }
             }
 
             ext.settings.gametest?.let {
-                mods.create(it.modId.get()) { sourceSet(java.sourceSets[it.sourceSetName.get()]) }
+                mods.create(it.modId.get()) { sourceSet(java.sourceSets[it.sourceSet.get()]) }
             }
         }
 

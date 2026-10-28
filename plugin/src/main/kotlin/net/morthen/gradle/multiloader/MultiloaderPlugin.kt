@@ -50,7 +50,7 @@ class MultiloaderPlugin : Plugin<Project> {
         }
     }
 
-    private fun applyToSubproject(project: Project): Unit {
+    private fun applyToSubproject(project: Project) {
         val settings = project.rootProject.extensions.findByType(MultiloaderSettingsExtension::class.java)
             ?: throw GradleException("Apply 'net.morthen.gradle.multiloader' to the root project as well (project ${project.path})")
 
@@ -76,6 +76,9 @@ class MultiloaderPlugin : Plugin<Project> {
         val idea = project.extensions.getByType(IdeaModel::class.java)
         idea.module.isDownloadSources = true
         idea.module.isDownloadJavadoc = true
+
+        // Register CustomSource container
+        ext.registerAdditionalSourceSets()
 
         project.afterEvaluate {
             val loader = ext.loader.get()
