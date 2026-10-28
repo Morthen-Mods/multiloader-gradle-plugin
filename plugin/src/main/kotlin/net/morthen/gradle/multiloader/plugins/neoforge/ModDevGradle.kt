@@ -1,5 +1,6 @@
 package net.morthen.gradle.multiloader.plugins.neoforge
 
+import net.morthen.gradle.multiloader.api.registerGradleRun
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
@@ -7,13 +8,8 @@ import net.neoforged.moddevgradle.legacyforge.dsl.LegacyForgeExtension
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
-import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.gradle.ext.Gradle
-import org.jetbrains.gradle.ext.runConfigurations
-import org.jetbrains.gradle.ext.settings
 
 object ModDevGradle {
     const val PLUGIN_ID = "net.neoforged.moddev"
@@ -82,17 +78,14 @@ fun applyModDev(target: Project, ext: MultiloaderExtension) = with(target) {
         }
 
         // Register runs
-        ext.settings.runs.forEach { ModDevRunApplier(this, target).apply(it) }
+        ext.settings.runs.forEach { run ->
+            ModDevRunApplier(this, target).apply(run)
+            registerGradleRun(target, run)
+        }
 
         runs {
             configureEach {
                 systemProperty("terminal.ansi", "true")
-
-                val upperName = name.replaceFirstChar { it.uppercase() }
-                rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("NeoForge $upperName") {
-                    taskNames = listOf(":${target.name}:run$upperName")
-                    setProject(target)
-                }
             }
         }
     }

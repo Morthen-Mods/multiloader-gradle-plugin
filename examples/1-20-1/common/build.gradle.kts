@@ -4,7 +4,6 @@ plugins {
     id("net.morthen.gradle.multiloader")
 }
 
-
 multiloader {
     loader = Loader.COMMON
 }

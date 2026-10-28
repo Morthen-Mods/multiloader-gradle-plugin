@@ -1,20 +1,15 @@
 package net.morthen.gradle.multiloader.plugins.fabric
 
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
-import net.fabricmc.loom.task.LoomTasks
 import net.morthen.gradle.multiloader.api.MinecraftVersion
+import net.morthen.gradle.multiloader.api.registerGradleRun
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
-import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.gradle.ext.Gradle
-import org.jetbrains.gradle.ext.runConfigurations
-import org.jetbrains.gradle.ext.settings
 
 object FabricLoom {
     const val PLUGIN_ID = "net.fabricmc.fabric-loom"
@@ -64,19 +59,15 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target){
     }.map { layout.projectDirectory.file(it.absolutePath) })
 
     // Register Custom Runs
-    ext.settings.runs.forEach {
-        LoomRunApplier(loom).apply(it)
+    ext.settings.runs.forEach { run ->
+        LoomRunApplier(loom).apply(run)
+        registerGradleRun(target, run)
     }
 
     //TODO: implement custom gradle tasks - does those gradle task get implemented correctly?
     loom.runConfigs.configureEach {
         systemProperties.put("fabric-tag-conventions-v2.missingTagTranslationWarning", "VERBOSE")
         generateRunConfig.set(false)
-
-        rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>(displayName.get()) {
-            taskNames = listOf(LoomTasks.getRunConfigTaskName(this@configureEach))
-            setProject(project)
-        }
     }
 
     loom.mods {

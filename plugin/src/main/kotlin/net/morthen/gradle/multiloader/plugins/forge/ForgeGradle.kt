@@ -1,21 +1,16 @@
 package net.morthen.gradle.multiloader.plugins.forge
 
-import net.fabricmc.loom.task.LoomTasks
 import net.minecraftforge.gradle.ForgeGradleExtension
 import net.minecraftforge.gradle.MinecraftExtension
 import net.minecraftforge.gradle.MinecraftExtensionForProject
 import net.minecraftforge.gradle.SlimeLauncherOptions
+import net.morthen.gradle.multiloader.api.registerGradleRun
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
-import org.gradle.kotlin.dsl.create
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.repositories
 import org.gradle.kotlin.dsl.the
-import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.gradle.ext.Gradle
-import org.jetbrains.gradle.ext.runConfigurations
-import org.jetbrains.gradle.ext.settings
 
 object ForgeGradle {
     const val PLUGIN_ID = "net.minecraftforge.gradle"
@@ -64,6 +59,7 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
 
     ext.settings.runs.forEach { run ->
         ForgeGradleRunApplier(minecraft).apply(run)
+        registerGradleRun(target, run)
     }
 
     // The dumb hacky fix, which should be already fixed as stated by Lex
