@@ -12,8 +12,8 @@ class ForgeGradleRunApplier(private val minecraft: MinecraftExtensionForProject)
 
         // Identity
         when (run.type.orNull) {
-            RunType.CLIENT -> cfg.configureBootstrapLaunch(true)
-            RunType.SERVER -> cfg.configureBootstrapLaunch(false)
+            RunType.CLIENT -> if (run.name != "client") cfg.configureBootstrapLaunch(true)
+            RunType.SERVER -> if (run.name != "server") cfg.configureBootstrapLaunch(false)
             null -> throw GradleException("Missing runType for '${run.name}'")
         }
 
