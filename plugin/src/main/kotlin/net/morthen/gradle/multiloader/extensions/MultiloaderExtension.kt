@@ -1,6 +1,7 @@
 package net.morthen.gradle.multiloader.extensions
 
 import net.morthen.gradle.multiloader.api.Loader
+import net.morthen.gradle.multiloader.api.ModifierType
 import net.morthen.gradle.multiloader.dsl.Run
 import org.gradle.api.Project
 import org.gradle.api.provider.ListProperty
@@ -13,6 +14,7 @@ abstract class MultiloaderExtension {
 
     abstract val loader: Property<Loader>
     abstract val mixins: ListProperty<String> // Only needed for Forge
+    abstract val modifierType: Property<ModifierType> // Only needed for Fabric
 
     init {
         mixins.convention(listOf())

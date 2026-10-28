@@ -2,7 +2,6 @@ package net.morthen.gradle.multiloader.plugins.fabric
 
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.morthen.gradle.multiloader.api.MinecraftVersion
-import net.morthen.gradle.multiloader.api.registerGradleRun
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.Project
@@ -48,20 +47,22 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target){
         implement("net.fabricmc:fabric-loader:${ ext.settings.fabricLoaderVersion.get() }")
     }
 
-    //TODO: make accessWidener File a Property in MulitloaderSettingsExtension
-    loom.accessWidenerPath.convention(provider {
-        val fileName = "${ ext.settings.modId.get() }.classtweaker"
+    if (ext.modifierType.orNull != null) {
+        loom.accessWidenerPath.convention(provider {
+            val fileName = ext.modifierType.get().getFileName(ext.settings.modId.get())
 
-        listOf(target, project(":common"))
-            .flatMap { it.the(JavaPluginExtension::class).sourceSets["main"].resources.sourceDirectories.files }
-            .flatMap { it.listFiles()?.toList() ?: listOf() }
-            .firstOrNull { it.name == fileName }
-    }.map { layout.projectDirectory.file(it.absolutePath) })
+            // searches in the fabric project and the common Project
+            listOf(target, project(":common"))
+                .flatMap { it.the(JavaPluginExtension::class).sourceSets["main"].resources.sourceDirectories.files }
+                .flatMap { it.listFiles()?.toList() ?: listOf() }
+                .firstOrNull { it.name == fileName }
+        }.map { layout.projectDirectory.file(it.absolutePath) })
+    }
 
     // Register Custom Runs
     ext.settings.runs.forEach { LoomRunApplier(loom, ext).apply(target, it) }
 
-    //TODO: implement custom gradle tasks - does those gradle task get implemented correctly?
+    // Apply tag convention property and prevent loom from generating Gradle runs
     loom.runConfigs.configureEach {
         systemProperties.put("fabric-tag-conventions-v2.missingTagTranslationWarning", "VERBOSE")
         generateRunConfig.set(false)
