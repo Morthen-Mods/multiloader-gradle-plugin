@@ -6,6 +6,7 @@ import net.minecraftforge.gradle.MinecraftExtensionForProject
 import net.minecraftforge.gradle.SlimeLauncherOptions
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.repositories
 import org.gradle.kotlin.dsl.the
@@ -57,5 +58,14 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
 
     ext.settings.runs.forEach {
         ForgeGradleRunApplier(minecraft).apply(it)
+    }
+
+    // The dumb hacky fix, which should be already fixed as stated by Lex
+    // But surprise it isn't
+    val java = the<JavaPluginExtension>()
+    java.sourceSets.configureEach {
+        val dir = layout.buildDirectory.dir("sourcesSets/$name")
+        output.setResourcesDir(dir.get())
+        getJava().destinationDirectory.set(dir)
     }
 }
