@@ -7,7 +7,7 @@ import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
 import net.morthen.gradle.multiloader.plugins.neoforge.applyCommonModDev
 import net.morthen.gradle.multiloader.plugins.fabric.applyFabricLoom
 import net.morthen.gradle.multiloader.plugins.fabric.applyFabricLoomDatagen
-import net.morthen.gradle.multiloader.plugins.applyForgeGradle
+import net.morthen.gradle.multiloader.plugins.forge.applyForgeGradle
 import net.morthen.gradle.multiloader.plugins.neoforge.applyLegacyCommon
 import net.morthen.gradle.multiloader.plugins.neoforge.applyModDev
 import net.morthen.gradle.multiloader.plugins.neoforge.applyModDevDatagen

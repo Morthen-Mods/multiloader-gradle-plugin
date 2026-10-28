@@ -43,6 +43,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+*runs
+*run
 
 /example_project/common/runs/
 /example_project/common/src/generated/
