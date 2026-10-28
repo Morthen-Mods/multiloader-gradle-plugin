@@ -1,12 +1,10 @@
 package net.morthen.gradle.multiloader.dsl
 
 import org.gradle.api.Named
-import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.SetProperty
-import java.io.File
 import javax.inject.Inject
 
 enum class RunType { CLIENT, SERVER }
