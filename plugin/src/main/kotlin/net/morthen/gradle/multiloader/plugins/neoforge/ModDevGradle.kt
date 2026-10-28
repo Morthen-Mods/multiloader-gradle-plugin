@@ -1,9 +1,9 @@
 package net.morthen.gradle.multiloader.plugins.neoforge
 
+import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
 import net.neoforged.moddevgradle.legacyforge.dsl.LegacyForgeExtension
-import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
@@ -30,6 +30,20 @@ fun applyCommonModDev(target: Project, ext: MultiloaderExtension) = with(target)
     extensions.configure<NeoForgeExtension> {
         neoFormVersion = ext.settings.neoformVersion.get()
     }
+
+    afterEvaluate {
+        val commonJava = configurations.consumable("commonJava")
+        val commonResources = configurations.consumable("commonResources")
+
+        extensions.configure<JavaPluginExtension> {
+            sourceSets["main"].resources.srcDir("src/generated")
+
+            artifacts {
+                sourceSets["main"].java.sourceDirectories.forEach { add(commonJava.name, it) }
+                sourceSets["main"].resources.sourceDirectories.forEach { add(commonResources.name, it) }
+            }
+        }
+    }
 }
 
 // Used for common project until 1.20.1
@@ -39,6 +53,20 @@ fun applyLegacyCommon(target: Project, ext: MultiloaderExtension) = with(target)
     extensions.configure<LegacyForgeExtension> {
         mcpVersion = ext.settings.minecraftVersion.get()
     }
+    afterEvaluate {
+        val commonJava = configurations.consumable("commonJava")
+        val commonResources = configurations.consumable("commonResources")
+
+        extensions.configure<JavaPluginExtension> {
+            sourceSets["main"].resources.srcDir("src/generated")
+
+            artifacts {
+                sourceSets["main"].java.sourceDirectories.forEach { add(commonJava.name, it) }
+                sourceSets["main"].resources.sourceDirectories.forEach { add(commonResources.name, it) }
+            }
+        }
+    }
+
 }
 
 // Neoforge ModDev after 1.20.2
@@ -80,6 +108,7 @@ fun applyModDev(target: Project, ext: MultiloaderExtension) = with(target) {
 
 fun applyModDevDatagen(target: Project, ext: MultiloaderExtension) = with(target) {
     pluginManager.apply(ModDevGradle.PLUGIN_ID)
+    applyGradleConvention("neoforge")
 
     extensions.configure<NeoForgeExtension> {
         version = ext.settings.neoforgeVersion.get()

@@ -3,6 +3,7 @@ package net.morthen.gradle.multiloader.plugins.fabric
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.fabricmc.loom.task.LoomTasks
 import net.morthen.gradle.multiloader.api.MinecraftVersion
+import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
@@ -26,6 +27,7 @@ object FabricLoom {
 
 fun applyFabricLoomDatagen(target: Project, ext: MultiloaderExtension) = with(target) {
     pluginManager.apply(FabricLoom.PLUGIN_REMAP_ID)
+    applyGradleConvention("fabric")
 
     val loom = the<LoomGradleExtensionAPI>()
 

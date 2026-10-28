@@ -4,8 +4,7 @@ license = "MIT"
 
 [[mods]]
 modId = "example_mod"
-version = "${version}"
-displayName = "${mod_name}"
-logoFile="${mod_id}_banner.png"
-authors = "${mod_author}"
-description = '''${mod_description}'''
+version = "0.1.0"
+displayName = "Example Mod"
+authors = "Morthen"
+description = '''Example Mod for plugin'''

@@ -64,12 +64,6 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
 
     ext.settings.runs.forEach { run ->
         ForgeGradleRunApplier(minecraft).apply(run)
-
-        val upperName = run.name.replaceFirstChar { it.uppercase() }
-        rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>(run.displayName.get()) {
-            taskNames = listOf(":${target.name}:run$upperName")
-            setProject(target)
-        }
     }
 
     // The dumb hacky fix, which should be already fixed as stated by Lex

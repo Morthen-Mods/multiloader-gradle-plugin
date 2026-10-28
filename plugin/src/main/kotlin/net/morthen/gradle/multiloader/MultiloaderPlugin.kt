@@ -2,6 +2,8 @@ package net.morthen.gradle.multiloader
 
 import net.morthen.gradle.multiloader.api.Loader
 import net.morthen.gradle.multiloader.api.MinecraftVersion
+import net.morthen.gradle.multiloader.conventions.applyCompileSettings
+import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
 import net.morthen.gradle.multiloader.plugins.neoforge.applyCommonModDev
@@ -25,9 +27,17 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 //          - more to come
 
 class MultiloaderPlugin : Plugin<Project> {
-    override fun apply(project: Project) {
+    private fun applyCommonPlugins(project: Project) {
+        project.pluginManager.apply("java-library")
+        project.pluginManager.apply("maven-publish")
+        project.pluginManager.apply("version-catalog")
+        project.pluginManager.apply("java")
         project.pluginManager.apply("idea")
         project.pluginManager.apply("org.jetbrains.gradle.plugin.idea-ext")
+    }
+
+    override fun apply(project: Project) {
+        applyCommonPlugins(project)
 
         val mc = project.providers.gradleProperty("minecraft_version").get()
         MinecraftVersion.checkSupport(mc)
@@ -43,16 +53,14 @@ class MultiloaderPlugin : Plugin<Project> {
         val settings = project.rootProject.extensions.findByType(MultiloaderSettingsExtension::class.java)
             ?: throw GradleException("Apply 'net.morthen.gradle.multiloader' to the root project as well (project ${project.path})")
 
-        project.pluginManager.apply("idea")
-        project.pluginManager.apply("org.jetbrains.gradle.plugin.idea-ext")
-
         val ext = project.extensions.create("multiloader", MultiloaderExtension::class.java)
         ext.settings = settings
 
         // Base Java settings
-        project.pluginManager.apply("java")
-        project.extensions.getByType(JavaPluginExtension::class.java)
-            .toolchain.languageVersion.set(settings.javaVersion.map { JavaLanguageVersion.of(it) })
+        val javaExt = project.extensions.getByType(JavaPluginExtension::class.java)
+        javaExt.toolchain.languageVersion.set(settings.javaVersion.map { JavaLanguageVersion.of(it) })
+        javaExt.withJavadocJar()
+        javaExt.withSourcesJar()
 
         // Idea settings to download sources and javadoc
         project.pluginManager.apply("idea")
@@ -64,6 +72,11 @@ class MultiloaderPlugin : Plugin<Project> {
             val loader = ext.loader.get()
             val mc = settings.minecraftVersion.get()
             val legacy = MinecraftVersion.isLegacy(mc)
+
+            applyGradleConvention(loader.name.lowercase())
+            if (loader != Loader.COMMON) {
+                applyCompileSettings(project, ext)
+            }
 
             when (loader) {
                 Loader.COMMON -> {
