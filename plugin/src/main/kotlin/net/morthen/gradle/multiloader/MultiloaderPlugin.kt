@@ -16,6 +16,7 @@ import net.morthen.gradle.multiloader.plugins.neoforge.applyModDevDatagen
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.BasePluginExtension
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.plugins.ide.idea.model.IdeaModel
@@ -49,7 +50,7 @@ class MultiloaderPlugin : Plugin<Project> {
         }
     }
 
-    private fun applyToSubproject(project: Project) {
+    private fun applyToSubproject(project: Project): Unit {
         val settings = project.rootProject.extensions.findByType(MultiloaderSettingsExtension::class.java)
             ?: throw GradleException("Apply 'net.morthen.gradle.multiloader' to the root project as well (project ${project.path})")
 
@@ -61,6 +62,14 @@ class MultiloaderPlugin : Plugin<Project> {
         javaExt.toolchain.languageVersion.set(settings.javaVersion.map { JavaLanguageVersion.of(it) })
         javaExt.withJavadocJar()
         javaExt.withSourcesJar()
+
+        // Mod Version and archive name
+        // version: 26.3-5.0.0
+        // name: example_mod-neoforge
+        // jar: example_mod-neoforge-26.3-5.0.0
+        project.version = "${ settings.minecraftVersion.get() }-${ project.version }"
+        project.extensions.getByType(BasePluginExtension::class.java)
+            .archivesName.set("${ settings.modId.get() }-${ project.name }")
 
         // Idea settings to download sources and javadoc
         project.pluginManager.apply("idea")
@@ -83,12 +92,14 @@ class MultiloaderPlugin : Plugin<Project> {
                     if (legacy) applyLegacyCommon(project, ext)
                     else applyCommonModDev(project, ext)
                 }
+
                 Loader.FABRIC -> applyFabricLoom(project, ext)
                 Loader.FORGE -> applyForgeGradle(project, ext)
                 Loader.NEOFORGE -> {
                     if (legacy) throw GradleException("NeoForge does not support Minecraft $mc")
                     else applyModDev(project, ext)
                 }
+
                 Loader.DATAGEN -> {
                     if (legacy) applyFabricLoomDatagen(project, ext)
                     else applyModDevDatagen(project, ext)
