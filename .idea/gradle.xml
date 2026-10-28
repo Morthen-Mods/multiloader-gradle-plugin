@@ -26,14 +26,14 @@
                   <project path="$PROJECT_DIR$/example/1-21-1/neoforge" />
                 </projects>
               </build>
-              <build path="$PROJECT_DIR$/example/26-1" name="example-26-1">
+              <build path="$PROJECT_DIR$/example/26-1-2" name="example-26-1-2">
                 <projects>
-                  <project path="$PROJECT_DIR$/example/26-1" />
-                  <project path="$PROJECT_DIR$/example/26-1/common" />
-                  <project path="$PROJECT_DIR$/example/26-1/datagen" />
-                  <project path="$PROJECT_DIR$/example/26-1/fabric" />
-                  <project path="$PROJECT_DIR$/example/26-1/forge" />
-                  <project path="$PROJECT_DIR$/example/26-1/neoforge" />
+                  <project path="$PROJECT_DIR$/example/26-1-2" />
+                  <project path="$PROJECT_DIR$/example/26-1-2/common" />
+                  <project path="$PROJECT_DIR$/example/26-1-2/datagen" />
+                  <project path="$PROJECT_DIR$/example/26-1-2/fabric" />
+                  <project path="$PROJECT_DIR$/example/26-1-2/forge" />
+                  <project path="$PROJECT_DIR$/example/26-1-2/neoforge" />
                 </projects>
               </build>
               <build path="$PROJECT_DIR$/plugin" name="plugin">
@@ -60,12 +60,12 @@
             <option value="$PROJECT_DIR$/example/1-21-1/fabric" />
             <option value="$PROJECT_DIR$/example/1-21-1/forge" />
             <option value="$PROJECT_DIR$/example/1-21-1/neoforge" />
-            <option value="$PROJECT_DIR$/example/26-1" />
-            <option value="$PROJECT_DIR$/example/26-1/common" />
-            <option value="$PROJECT_DIR$/example/26-1/datagen" />
-            <option value="$PROJECT_DIR$/example/26-1/fabric" />
-            <option value="$PROJECT_DIR$/example/26-1/forge" />
-            <option value="$PROJECT_DIR$/example/26-1/neoforge" />
+            <option value="$PROJECT_DIR$/example/26-1-2" />
+            <option value="$PROJECT_DIR$/example/26-1-2/common" />
+            <option value="$PROJECT_DIR$/example/26-1-2/datagen" />
+            <option value="$PROJECT_DIR$/example/26-1-2/fabric" />
+            <option value="$PROJECT_DIR$/example/26-1-2/forge" />
+            <option value="$PROJECT_DIR$/example/26-1-2/neoforge" />
             <option value="$PROJECT_DIR$/plugin" />
           </set>
         </option>

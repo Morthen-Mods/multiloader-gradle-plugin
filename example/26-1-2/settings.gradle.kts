@@ -14,7 +14,7 @@ plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 
-rootProject.name = "example-26-1"
+rootProject.name = "example-26-1-2"
 
 include("common")
 include("datagen")
