@@ -59,10 +59,7 @@ fun applyFabricLoom(target: Project, ext: MultiloaderExtension) = with(target){
     }.map { layout.projectDirectory.file(it.absolutePath) })
 
     // Register Custom Runs
-    ext.settings.runs.forEach { run ->
-        LoomRunApplier(loom).apply(run)
-        registerGradleRun(target, run)
-    }
+    ext.settings.runs.forEach { LoomRunApplier(loom, ext).apply(target, it) }
 
     //TODO: implement custom gradle tasks - does those gradle task get implemented correctly?
     loom.runConfigs.configureEach {

@@ -10,7 +10,7 @@ import org.jetbrains.gradle.ext.runConfigurations
 import org.jetbrains.gradle.ext.settings
 
 interface RunApplier {
-    fun apply(run: Run)
+    fun apply(target: Project, run: Run)
 }
 
 fun registerGradleRun(target: Project, run: Run){

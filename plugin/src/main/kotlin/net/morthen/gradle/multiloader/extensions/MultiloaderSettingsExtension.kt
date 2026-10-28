@@ -11,12 +11,14 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.kotlin.dsl.newInstance
+import java.io.File
 import javax.inject.Inject
 
 /** Shared settings, configured once in the root project via `multiloaderSettings { }`. */
 abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectFactory, val factory: ProviderFactory, val project: Project) {
     // Basic
     abstract val minecraftVersion: Property<String>
+    abstract val commonRunDirectory: Property<Boolean>
 
     // Mod Infos
     abstract val modId: Property<String>
@@ -48,6 +50,7 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
     init {
         // Basic
         minecraftVersion.convention(factory.gradleProperty("minecraft_version"))
+        commonRunDirectory.convention(false)
 
         // ModInfos
         modId.convention(factory.gradleProperty("mod_id"))

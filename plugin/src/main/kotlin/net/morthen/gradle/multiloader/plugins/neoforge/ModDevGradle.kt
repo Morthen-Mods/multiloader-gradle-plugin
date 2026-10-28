@@ -78,10 +78,7 @@ fun applyModDev(target: Project, ext: MultiloaderExtension) = with(target) {
         }
 
         // Register runs
-        ext.settings.runs.forEach { run ->
-            ModDevRunApplier(this, target).apply(run)
-            registerGradleRun(target, run)
-        }
+        ext.settings.runs.forEach { ModDevRunApplier(this, ext).apply(target, it) }
 
         runs {
             configureEach {

@@ -2,12 +2,15 @@ package net.morthen.gradle.multiloader.plugins.forge
 
 import net.minecraftforge.gradle.MinecraftExtensionForProject
 import net.morthen.gradle.multiloader.api.RunApplier
+import net.morthen.gradle.multiloader.api.registerGradleRun
 import net.morthen.gradle.multiloader.dsl.Run
 import net.morthen.gradle.multiloader.dsl.RunType
+import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.GradleException
+import org.gradle.api.Project
 
-class ForgeGradleRunApplier(private val minecraft: MinecraftExtensionForProject): RunApplier {
-    override fun apply(run: Run) {
+class ForgeGradleRunApplier(private val minecraft: MinecraftExtensionForProject, private val ext: MultiloaderExtension): RunApplier {
+    override fun apply(target: Project, run: Run) {
         val cfg = minecraft.runs.findByName(run.name) ?: minecraft.runs.create(run.name)
 
         // Identity
@@ -20,10 +23,12 @@ class ForgeGradleRunApplier(private val minecraft: MinecraftExtensionForProject)
         run.mainClass.orNull?.let { cfg.mainClass.set(it) }
 
         // System and JVM Settings
-        run.runDirectory.orNull?.let { cfg.workingDir.set(it) }
+        cfg.workingDir.set(ext.buildRunDirectory(target, run))
         cfg.args.addAll(run.programArgs)
         cfg.jvmArgs.addAll(run.jvmArgs)
         cfg.systemProperties.putAll(run.systemProperties)
         cfg.environment.putAll(run.environment)
+
+        registerGradleRun(target, run)
     }
 }

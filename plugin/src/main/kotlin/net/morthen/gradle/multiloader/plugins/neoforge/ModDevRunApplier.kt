@@ -1,16 +1,18 @@
 package net.morthen.gradle.multiloader.plugins.neoforge
 
 import net.morthen.gradle.multiloader.api.RunApplier
+import net.morthen.gradle.multiloader.api.registerGradleRun
 import net.morthen.gradle.multiloader.dsl.Run
 import net.morthen.gradle.multiloader.dsl.RunType
+import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.neoforged.moddevgradle.dsl.ModDevExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.the
 
-class ModDevRunApplier(private val modDev: ModDevExtension, private val project: Project): RunApplier {
-    override fun apply(run: Run) {
+class ModDevRunApplier(private val modDev: ModDevExtension, private val ext: MultiloaderExtension): RunApplier {
+    override fun apply(target: Project, run: Run) {
         val cfg = modDev.runs.findByName(run.name) ?: modDev.runs.create(run.name)
 
         // Identity
@@ -22,10 +24,10 @@ class ModDevRunApplier(private val modDev: ModDevExtension, private val project:
 
         run.displayName.orNull?.let { cfg.ideName.set(it) }
         run.mainClass.orNull?.let { cfg.mainClass.set(it) }
-        cfg.sourceSet.set(project.the<JavaPluginExtension>().sourceSets.named(run.sourceSetName.get()))
+        cfg.sourceSet.set(target.the<JavaPluginExtension>().sourceSets.named(run.sourceSetName.get()))
 
         // System and JVM Settings
-        run.runDirectory.orNull?.let { cfg.gameDirectory.set(it) }
+        cfg.gameDirectory.set(ext.buildRunDirectory(target, run))
         cfg.programArguments.addAll(run.programArgs)
         cfg.jvmArguments.addAll(run.jvmArgs)
         cfg.systemProperties.putAll(run.systemProperties)
@@ -35,5 +37,7 @@ class ModDevRunApplier(private val modDev: ModDevExtension, private val project:
         run.loadedMods.get().forEach {
             cfg.loadedMods.add(modDev.mods.getByName(it))
         }
+
+        registerGradleRun(target, run)
     }
 }

@@ -2,13 +2,15 @@ package net.morthen.gradle.multiloader.plugins.fabric
 
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.morthen.gradle.multiloader.api.RunApplier
+import net.morthen.gradle.multiloader.api.registerGradleRun
 import net.morthen.gradle.multiloader.dsl.Run
 import net.morthen.gradle.multiloader.dsl.RunType
+import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 
-class LoomRunApplier(private val loom: LoomGradleExtensionAPI): RunApplier {
-    override fun apply(run: Run) {
+class LoomRunApplier(private val loom: LoomGradleExtensionAPI, private val ext: MultiloaderExtension): RunApplier {
+    override fun apply(target: Project, run: Run) {
         val cfg = loom.runConfigs.findByName(run.getName()) ?: loom.runConfigs.create(run.getName())
 
         // Identity
@@ -23,11 +25,13 @@ class LoomRunApplier(private val loom: LoomGradleExtensionAPI): RunApplier {
         cfg.sourceSet.set(run.sourceSetName)
 
         // System and JVM Settings
-        run.runDirectory.orNull?.let { cfg.runDirectory.set(it) }
+        cfg.runDirectory.set(ext.buildRunDirectory(target, run))
         cfg.programArguments.addAll(run.programArgs)
         cfg.jvmArguments.addAll(run.jvmArgs)
         cfg.systemProperties.putAll(run.systemProperties)
         cfg.environmentVars.putAll(run.environment)
         cfg.generateRunConfig.set(false)
+
+        registerGradleRun(target, run)
     }
 }

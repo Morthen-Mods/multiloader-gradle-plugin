@@ -21,7 +21,7 @@ abstract class Run @Inject constructor(private val name: String): Named {
     abstract val sourceSetName: Property<String>
 
     // System and JVM Settings
-    abstract val runDirectory: DirectoryProperty
+    abstract val runDirectory: Property<String>
     abstract val programArgs: ListProperty<String>
     abstract val jvmArgs: ListProperty<String>
     abstract val systemProperties: MapProperty<String, String>
@@ -37,7 +37,7 @@ abstract class Run @Inject constructor(private val name: String): Named {
     fun client() = type.set(RunType.CLIENT)
     fun server() = type.set(RunType.SERVER)
 
-    fun runDirectory(name: String) = runDirectory.set(File(name))
+    fun runDirectory(name: String) = runDirectory.set(name)
     fun displayName(name: String) = displayName.set(name)
 
     fun programArg(arg: String) = programArgs.add(arg)

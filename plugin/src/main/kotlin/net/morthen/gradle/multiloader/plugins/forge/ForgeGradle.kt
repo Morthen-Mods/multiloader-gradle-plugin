@@ -57,10 +57,7 @@ fun applyForgeGradle(target: Project, ext: MultiloaderExtension) = with(target) 
         "implementation"(minecraft.dependency("net.minecraftforge:forge:${ mc }-${ forge }"))
     }
 
-    ext.settings.runs.forEach { run ->
-        ForgeGradleRunApplier(minecraft).apply(run)
-        registerGradleRun(target, run)
-    }
+    ext.settings.runs.forEach { ForgeGradleRunApplier(minecraft, ext).apply(target, it) }
 
     // The dumb hacky fix, which should be already fixed as stated by Lex
     // But surprise it isn't
