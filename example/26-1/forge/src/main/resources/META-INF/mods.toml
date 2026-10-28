@@ -1,0 +1,10 @@
+modLoader = "javafml" #mandatory
+loaderVersion = "[0,)" #mandatory
+license = "MIT"
+
+[[mods]]
+modId = "example_mod"
+version = "0.1.0"
+displayName = "Example Mod"
+authors = "Morthen"
+description = '''Example Mod for plugin'''

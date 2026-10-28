@@ -12,9 +12,9 @@ plugins {
 
 multiloaderSettings {
     runs {
-        register("testClient") {
+        register("client") {
             client()
-            displayName("Fabric Client (26.1)")
+            displayName("Client (26.1)")
         }
     }
 }

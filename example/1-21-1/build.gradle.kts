@@ -11,5 +11,10 @@ plugins {
 }
 
 multiloaderSettings {
-
+    runs {
+        register("client") {
+            client()
+            displayName("Client (26.1)")
+        }
+    }
 }
