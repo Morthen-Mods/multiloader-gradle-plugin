@@ -21,10 +21,7 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.plugins.ide.idea.model.IdeaModel
 
-// TODO:    - create boilerplate mods to test dependencies and runs
-//          - implement proper common run creation/handling
-//          - implement common connection to fabric/datagen/forge/neoforge
-//          - implement devLogin for client runs - native in neoforge -- Needs a big disclaimer in README because tokens are not encrypted
+// TODO:    - implement devLogin for client runs - native in neoforge -- Needs a big disclaimer in README because tokens are not encrypted
 //          - more to come
 
 class MultiloaderPlugin : Plugin<Project> {
