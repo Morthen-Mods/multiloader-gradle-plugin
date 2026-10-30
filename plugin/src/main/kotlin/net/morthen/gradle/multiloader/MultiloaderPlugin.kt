@@ -5,6 +5,7 @@ import net.morthen.gradle.multiloader.api.MinecraftVersion
 import net.morthen.gradle.multiloader.configurator.comon.CommonConfigurator
 import net.morthen.gradle.multiloader.configurator.datagen.DatagenConfigurator
 import net.morthen.gradle.multiloader.configurator.fabric.FabricConfigurator
+import net.morthen.gradle.multiloader.configurator.forge.ForgeConfigurator
 import net.morthen.gradle.multiloader.configurator.forge.applyForgeGradle
 import net.morthen.gradle.multiloader.configurator.neoforge.NeoforgeConfigurator
 import net.morthen.gradle.multiloader.conventions.applyCompileSettings
@@ -96,7 +97,7 @@ class MultiloaderPlugin : Plugin<Project> {
             when (loader) {
                 Loader.COMMON -> CommonConfigurator(project, legacy, ext).init()
                 Loader.FABRIC -> FabricConfigurator(project, ext).init()
-                Loader.FORGE -> applyForgeGradle(project, ext)
+                Loader.FORGE -> ForgeConfigurator(project, ext).init()
                 Loader.NEOFORGE -> NeoforgeConfigurator(project, legacy, ext).init()
                 Loader.DATAGEN -> DatagenConfigurator(project, legacy, ext).init()
             }
