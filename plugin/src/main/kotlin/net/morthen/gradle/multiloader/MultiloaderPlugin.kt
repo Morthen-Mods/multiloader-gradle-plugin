@@ -8,6 +8,7 @@ import net.morthen.gradle.multiloader.configurator.fabric.FabricConfigurator
 import net.morthen.gradle.multiloader.configurator.forge.ForgeConfigurator
 import net.morthen.gradle.multiloader.configurator.neoforge.NeoforgeConfigurator
 import net.morthen.gradle.multiloader.conventions.applyCompileSettings
+import net.morthen.gradle.multiloader.conventions.applyDefaultRepositories
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
@@ -56,6 +57,8 @@ class MultiloaderPlugin : Plugin<Project> {
     private fun applyToSubproject(project: Project) {
         val settings = project.rootProject.extensions.findByType(MultiloaderSettingsExtension::class.java)
             ?: throw GradleException("Apply 'net.morthen.gradle.multiloader' to the root project as well (project ${project.path})")
+
+        project.applyDefaultRepositories()
 
         val ext = project.extensions.create("multiloader", MultiloaderExtension::class.java)
         ext.settings = settings
