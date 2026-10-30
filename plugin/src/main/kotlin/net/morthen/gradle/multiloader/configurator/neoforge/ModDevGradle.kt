@@ -1,15 +1,12 @@
-package net.morthen.gradle.multiloader.plugins.neoforge
+package net.morthen.gradle.multiloader.configurator.neoforge
 
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.neoforged.moddevgradle.dsl.DataFileCollection
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
-import net.neoforged.moddevgradle.legacyforge.dsl.LegacyForgeExtension
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
 import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.gradle.ext.Gradle

@@ -6,11 +6,11 @@ import net.morthen.gradle.multiloader.conventions.applyCompileSettings
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
-import net.morthen.gradle.multiloader.plugins.comon.CommonConfigurator
-import net.morthen.gradle.multiloader.plugins.fabric.FabricConfigurator
-import net.morthen.gradle.multiloader.plugins.forge.applyForgeGradle
-import net.morthen.gradle.multiloader.plugins.neoforge.NeoforgeConfigurator
-import net.morthen.gradle.multiloader.plugins.neoforge.applyModDevDatagen
+import net.morthen.gradle.multiloader.configurator.comon.CommonConfigurator
+import net.morthen.gradle.multiloader.configurator.fabric.FabricConfigurator
+import net.morthen.gradle.multiloader.configurator.forge.applyForgeGradle
+import net.morthen.gradle.multiloader.configurator.neoforge.NeoforgeConfigurator
+import net.morthen.gradle.multiloader.configurator.neoforge.applyModDevDatagen
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project

@@ -1,4 +1,4 @@
-package net.morthen.gradle.multiloader.plugins.forge
+package net.morthen.gradle.multiloader.configurator.forge
 
 import net.minecraftforge.gradle.MinecraftExtensionForProject
 import net.morthen.gradle.multiloader.api.RunApplier

@@ -1,4 +1,4 @@
-package net.morthen.gradle.multiloader.plugins.fabric
+package net.morthen.gradle.multiloader.configurator.fabric
 
 object FabricLoom {
     const val PLUGIN_ID = "net.fabricmc.fabric-loom"

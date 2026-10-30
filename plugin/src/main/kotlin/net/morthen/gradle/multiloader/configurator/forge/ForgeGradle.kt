@@ -1,4 +1,4 @@
-package net.morthen.gradle.multiloader.plugins.forge
+package net.morthen.gradle.multiloader.configurator.forge
 
 import net.minecraftforge.gradle.ForgeGradleExtension
 import net.minecraftforge.gradle.MinecraftExtension
@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.JavaExec
 import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.get
 
 object ForgeGradle {
     const val PLUGIN_ID = "net.minecraftforge.gradle"

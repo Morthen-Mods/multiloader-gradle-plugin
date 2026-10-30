@@ -1,4 +1,4 @@
-package net.morthen.gradle.multiloader.plugins.neoforge
+package net.morthen.gradle.multiloader.configurator.neoforge
 
 import net.morthen.gradle.multiloader.api.LoaderPlugin
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension

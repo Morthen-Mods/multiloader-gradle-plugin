@@ -1,4 +1,4 @@
-package net.morthen.gradle.multiloader.plugins.fabric
+package net.morthen.gradle.multiloader.configurator.fabric
 
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.morthen.gradle.multiloader.api.LoaderPlugin

@@ -1,8 +1,8 @@
-package net.morthen.gradle.multiloader.plugins.comon
+package net.morthen.gradle.multiloader.configurator.comon
 
 import net.morthen.gradle.multiloader.api.LoaderPlugin
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
-import net.morthen.gradle.multiloader.plugins.neoforge.ModDevGradle
+import net.morthen.gradle.multiloader.configurator.neoforge.ModDevGradle
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
 import net.neoforged.moddevgradle.legacyforge.dsl.LegacyForgeExtension
 import org.gradle.api.Project

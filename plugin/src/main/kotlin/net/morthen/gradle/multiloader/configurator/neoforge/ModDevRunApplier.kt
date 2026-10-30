@@ -1,18 +1,19 @@
-package net.morthen.gradle.multiloader.plugins.fabric
+package net.morthen.gradle.multiloader.configurator.neoforge
 
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.morthen.gradle.multiloader.api.RunApplier
 import net.morthen.gradle.multiloader.api.registerGradleRun
 import net.morthen.gradle.multiloader.dsl.Run
 import net.morthen.gradle.multiloader.dsl.RunType
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
+import net.neoforged.moddevgradle.dsl.ModDevExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.kotlin.dsl.the
 
-// TODO: Rework the run application
-class LoomRunApplier(private val loom: LoomGradleExtensionAPI, private val ext: MultiloaderExtension): RunApplier {
+class ModDevRunApplier(private val modDev: ModDevExtension, private val ext: MultiloaderExtension): RunApplier {
     override fun apply(target: Project, run: Run) {
-        val cfg = loom.runConfigs.findByName(run.getName()) ?: loom.runConfigs.create(run.getName())
+        val cfg = modDev.runs.findByName(run.name) ?: modDev.runs.create(run.name)
 
         // Identity
         when (run.type.orNull) {
@@ -21,17 +22,21 @@ class LoomRunApplier(private val loom: LoomGradleExtensionAPI, private val ext: 
             null -> throw GradleException("Missing runType for '${run.name}'")
         }
 
-        run.displayName.orNull?.let { cfg.displayName.set(it) }
+        run.displayName.orNull?.let { cfg.ideName.set(it) }
         run.mainClass.orNull?.let { cfg.mainClass.set(it) }
-        cfg.sourceSet.set(run.sourceSetName)
+        cfg.sourceSet.set(target.the<JavaPluginExtension>().sourceSets.named(run.sourceSetName.get()))
 
         // System and JVM Settings
-        cfg.runDirectory.set(ext.buildRunDirectory(target, run))
+        cfg.gameDirectory.set(ext.buildRunDirectory(target, run))
         cfg.programArguments.addAll(run.programArgs)
         cfg.jvmArguments.addAll(run.jvmArgs)
         cfg.systemProperties.putAll(run.systemProperties)
-        cfg.environmentVars.putAll(run.environment)
-        cfg.generateRunConfig.set(false)
+        cfg.environment.putAll(run.environment)
+        cfg.disableIdeRun()
+
+        run.loadedMods.get().forEach {
+            cfg.loadedMods.add(modDev.mods.getByName(it))
+        }
 
         registerGradleRun(target, run)
     }
