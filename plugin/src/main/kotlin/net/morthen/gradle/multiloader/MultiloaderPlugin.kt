@@ -77,7 +77,6 @@ class MultiloaderPlugin : Plugin<Project> {
             .archivesName.set("${ settings.modId.get() }-${ project.name }")
 
         // Idea settings to download sources and javadoc
-        project.pluginManager.apply("idea")
         val idea = project.extensions.getByType(IdeaModel::class.java)
         idea.module.isDownloadSources = true
         idea.module.isDownloadJavadoc = true
