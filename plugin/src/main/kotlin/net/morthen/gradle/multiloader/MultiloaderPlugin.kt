@@ -66,7 +66,6 @@ class MultiloaderPlugin : Plugin<Project> {
         javaExt.withJavadocJar()
         javaExt.withSourcesJar()
 
-        // Mod Version and archive name
         // version: 26.3-5.0.0
         // name: example_mod-neoforge
         // jar: example_mod-neoforge-26.3-5.0.0

@@ -31,7 +31,8 @@ abstract class MultiloaderExtension @Inject constructor(val project: Project) {
 
     fun buildRunDirectory(target: Project, name: String): File {
         val common = settings.commonRunDirectory.get()
-        val baseDir = if (common) "../common" else target.projectDir
+        val commonProject = settings.commonProject.get()
+        val baseDir = if (common) "../$commonProject" else target.projectDir
         return File("$baseDir/runs/${name}")
     }
 

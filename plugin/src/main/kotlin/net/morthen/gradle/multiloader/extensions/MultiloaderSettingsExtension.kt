@@ -18,6 +18,7 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
     // Basic
     abstract val minecraftVersion: Property<String>
     abstract val commonRunDirectory: Property<Boolean>
+    abstract val commonProject: Property<String>
 
     // Mod Infos
     abstract val modId: Property<String>
@@ -50,6 +51,7 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
         // Basic
         minecraftVersion.convention(factory.gradleProperty("minecraft_version"))
         commonRunDirectory.convention(false)
+        commonProject.convention("common")
 
         // ModInfos
         modId.convention(factory.gradleProperty("mod_id"))

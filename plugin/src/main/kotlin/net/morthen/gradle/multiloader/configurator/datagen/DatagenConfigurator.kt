@@ -62,13 +62,19 @@ class DatagenConfigurator(private val target: Project, private val legacy: Boole
     }
 
     private fun createRuns(moddev: ModDevExtension) = with(target) {
+        val commonProject = settings.commonProject.get()
+
         moddev.runs {
             register("data") {
                 clientData()
                 disableIdeRun()
                 systemProperty("terminal.ansi", "true")
                 gameDirectory.set(ext.buildRunDirectory(target, "data"))
-                programArguments.set(listOf("--mod", ext.settings.modId.get(), "--all", "--output", file("../common/src/generated").absolutePath, "--existing", file("../common/src/main/resources").absolutePath))
+                programArguments.set(
+                    listOf("--mod", ext.settings.modId.get(), "--all",
+                        "--output", file("../$commonProject/src/generated").absolutePath,
+                        "--existing", file("../$commonProject/src/main/resources").absolutePath)
+                )
 
                 rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Common Datagen") {
                     taskNames = listOf(":${target.name}:runData")

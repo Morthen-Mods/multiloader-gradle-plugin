@@ -26,7 +26,7 @@ abstract class LoaderConfigurator(protected val ext: MultiloaderExtension) {
 
     fun getFile(target: Project, fileName: String): Provider<RegularFile> = with(target) {
         provider {
-            listOf(project(":common"), this)
+            listOf(project(":${settings.commonProject.get()}"), this)
                 .flatMap { it.the(JavaPluginExtension::class).sourceSets["main"].resources.srcDirs }
                 .flatMap { listOf(it, it.resolve("META-INF")) }
                 .map { it.resolve(fileName) }

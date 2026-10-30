@@ -10,7 +10,7 @@ import org.gradle.kotlin.dsl.*
 import org.gradle.language.jvm.tasks.ProcessResources
 
 fun applyCompileSettings(target: Project, ext: MultiloaderExtension) = with(target) {
-    val commonProject = ":common" //TODO: make that changeable with a Property
+    val commonProject = ":${ ext.settings.commonProject.get() }"
 
     dependencies {
         "compileOnly"(project(commonProject)) {
