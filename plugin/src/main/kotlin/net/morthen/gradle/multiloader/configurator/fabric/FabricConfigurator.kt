@@ -54,7 +54,10 @@ class FabricConfigurator(private val target: Project, ext: MultiloaderExtension)
         }
 
         // Create custom runs registered in rootProject
-        settings.runs.forEach { LoomRunApplier(loom, ext).apply(target, it) }
+        settings.runs.forEach {
+            // TODO: implement new RunApplier
+            println(it.displayName.get())
+        }
     }
 
     // Creates all available mods, currently only 3 possible

@@ -54,7 +54,8 @@ class NeoforgeConfigurator(private val target: Project, private val legacy: Bool
 
     private fun createRuns() = with(moddev) {
         settings.runs.forEach {
-            ModDevRunApplier(this, ext).apply(target, it)
+            // TODO: implement new RunApplier
+            println(it.displayName.get())
         }
     }
 }

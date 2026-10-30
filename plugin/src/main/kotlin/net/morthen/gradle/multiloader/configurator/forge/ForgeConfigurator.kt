@@ -64,6 +64,9 @@ class ForgeConfigurator(private val target: Project, ext: MultiloaderExtension):
     }
 
     private fun createRuns() {
-
+        settings.runs.forEach {
+            // TODO: implement new RunApplier
+            println(it.displayName.get())
+        }
     }
 }
