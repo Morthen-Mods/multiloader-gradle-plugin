@@ -7,7 +7,7 @@ import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
 import net.morthen.gradle.multiloader.plugins.comon.CommonConfigurator
-import net.morthen.gradle.multiloader.plugins.fabric.FabricPlugin
+import net.morthen.gradle.multiloader.plugins.fabric.FabricConfigurator
 import net.morthen.gradle.multiloader.plugins.forge.applyForgeGradle
 import net.morthen.gradle.multiloader.plugins.neoforge.applyModDev
 import net.morthen.gradle.multiloader.plugins.neoforge.applyModDevDatagen
@@ -95,7 +95,7 @@ class MultiloaderPlugin : Plugin<Project> {
 
             when (loader) {
                 Loader.COMMON -> CommonConfigurator(project, legacy, ext).init()
-                Loader.FABRIC -> FabricPlugin(project, ext).init()
+                Loader.FABRIC -> FabricConfigurator(project, ext).init()
                 Loader.FORGE -> applyForgeGradle(project, ext)
                 Loader.NEOFORGE -> {
                     if (legacy) throw GradleException("NeoForge does not support Minecraft $mc")

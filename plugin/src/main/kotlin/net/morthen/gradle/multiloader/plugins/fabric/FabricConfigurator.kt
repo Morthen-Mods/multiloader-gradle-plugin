@@ -9,7 +9,7 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
 
-class FabricPlugin(private val target: Project, ext: MultiloaderExtension): LoaderPlugin(ext) {
+class FabricConfigurator(private val target: Project, ext: MultiloaderExtension): LoaderPlugin(ext) {
     private lateinit var loom: LoomGradleExtensionAPI
 
     override fun init() {
