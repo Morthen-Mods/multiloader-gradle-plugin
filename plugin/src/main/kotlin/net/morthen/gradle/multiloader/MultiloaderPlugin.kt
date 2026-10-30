@@ -6,10 +6,9 @@ import net.morthen.gradle.multiloader.conventions.applyCompileSettings
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
+import net.morthen.gradle.multiloader.plugins.comon.CommonConfigurator
 import net.morthen.gradle.multiloader.plugins.fabric.FabricPlugin
 import net.morthen.gradle.multiloader.plugins.forge.applyForgeGradle
-import net.morthen.gradle.multiloader.plugins.neoforge.applyCommonModDev
-import net.morthen.gradle.multiloader.plugins.neoforge.applyLegacyCommon
 import net.morthen.gradle.multiloader.plugins.neoforge.applyModDev
 import net.morthen.gradle.multiloader.plugins.neoforge.applyModDevDatagen
 import org.gradle.api.GradleException
@@ -95,10 +94,7 @@ class MultiloaderPlugin : Plugin<Project> {
             }
 
             when (loader) {
-                Loader.COMMON -> {
-                    if (legacy) applyLegacyCommon(project, ext)
-                    else applyCommonModDev(project, ext)
-                }
+                Loader.COMMON -> CommonConfigurator(project, legacy, ext).init()
                 Loader.FABRIC -> FabricPlugin(project, ext).init()
                 Loader.FORGE -> applyForgeGradle(project, ext)
                 Loader.NEOFORGE -> {
