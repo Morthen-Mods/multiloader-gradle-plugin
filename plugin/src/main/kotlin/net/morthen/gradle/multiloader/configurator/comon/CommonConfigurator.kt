@@ -1,6 +1,6 @@
 package net.morthen.gradle.multiloader.configurator.comon
 
-import net.morthen.gradle.multiloader.api.LoaderPlugin
+import net.morthen.gradle.multiloader.api.LoaderConfigurator
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.configurator.neoforge.ModDevGradle
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
@@ -10,12 +10,13 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.get
 
-class CommonConfigurator(private val target: Project, private val legacy: Boolean, ext: MultiloaderExtension): LoaderPlugin(ext) {
+class CommonConfigurator(private val target: Project, private val legacy: Boolean, ext: MultiloaderExtension): LoaderConfigurator(ext) {
 
     override fun init() {
         super.init()
 
-        if (legacy) initLegacy() else initModern()
+        if (legacy) initLegacy()
+        else initModern()
 
         outgoingConfig()
     }
@@ -26,7 +27,8 @@ class CommonConfigurator(private val target: Project, private val legacy: Boolea
         extensions.configure<NeoForgeExtension> {
             neoFormVersion = settings.neoformVersion.get()
 
-            file("src/main/resources/META-INF/interface.json").let { interfaceInjectionData.from(it) }
+            val regular = getFile(target, "interface.json")
+            if (regular.isPresent) interfaceInjectionData.from(regular.get().asFile.absolutePath)
         }
     }
 

@@ -1,6 +1,6 @@
 package net.morthen.gradle.multiloader.configurator.datagen
 
-import net.morthen.gradle.multiloader.api.LoaderPlugin
+import net.morthen.gradle.multiloader.api.LoaderConfigurator
 import net.morthen.gradle.multiloader.configurator.neoforge.ModDevGradle
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.neoforged.moddevgradle.dsl.DataFileCollection
@@ -16,11 +16,12 @@ import org.jetbrains.gradle.ext.Gradle
 import org.jetbrains.gradle.ext.runConfigurations
 import org.jetbrains.gradle.ext.settings
 
-class DatagenConfigurator(private val target: Project, private val legacy: Boolean, ext: MultiloaderExtension): LoaderPlugin(ext) {
+class DatagenConfigurator(private val target: Project, private val legacy: Boolean, ext: MultiloaderExtension): LoaderConfigurator(ext) {
     override fun init() {
         super.init()
 
-        if (legacy) initLegacy() else initModern()
+        if (legacy) initLegacy()
+        else initModern()
     }
 
     private fun initModern() = with(target) {
@@ -50,13 +51,14 @@ class DatagenConfigurator(private val target: Project, private val legacy: Boole
 
     // Applies accesstransformer.cfg from the common project, the file from the project path itself get applied by default
     private fun applyAccessTransformer(collection: DataFileCollection){
-        target.project(":common").file("src/main/resources/META-INF/accesstransformer.cfg").let { collection.from(it.absolutePath) }
+        val regular = getFile(target, "accesstransformer.cfg")
+        if (regular.isPresent) collection.from(regular.get().asFile.absolutePath)
     }
 
     // Applies interface.json from common and target project, never gets applied by default
     private fun applyInterfaceInjection(collection: DataFileCollection){
-        target.project(":common").file("src/main/resources/META-INF/interface.json").let { collection.from(it.absolutePath) }
-        target.file("src/main/resources/META-INF/interface.json").let { collection.from(it.absolutePath) }
+        val regular = getFile(target, "interface.json")
+        if (regular.isPresent) collection.from(regular.get().asFile.absolutePath)
     }
 
     private fun createRuns(moddev: ModDevExtension) = with(target) {

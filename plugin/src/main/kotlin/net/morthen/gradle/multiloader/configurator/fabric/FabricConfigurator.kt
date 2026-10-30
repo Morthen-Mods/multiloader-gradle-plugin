@@ -1,15 +1,13 @@
 package net.morthen.gradle.multiloader.configurator.fabric
 
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
-import net.morthen.gradle.multiloader.api.LoaderPlugin
+import net.morthen.gradle.multiloader.api.LoaderConfigurator
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
 
-class FabricConfigurator(private val target: Project, ext: MultiloaderExtension): LoaderPlugin(ext) {
+class FabricConfigurator(private val target: Project, ext: MultiloaderExtension): LoaderConfigurator(ext) {
     private lateinit var loom: LoomGradleExtensionAPI
 
     override fun init() {
@@ -42,14 +40,8 @@ class FabricConfigurator(private val target: Project, ext: MultiloaderExtension)
     private fun applyAccessModifier() = with(target) {
         if (ext.modifierType.orNull != null) {
             val fileName = ext.modifierType.get().getFileName(modId)
-
-            loom.accessWidenerPath.convention(provider {
-                // TODO: apply custom common project name properly when implemented
-                listOf(this, project(":common"))
-                    .flatMap { it.the(JavaPluginExtension::class).sourceSets["main"].resources.srcDirs }
-                    .map { it.resolve(fileName) }
-                    .firstOrNull { it.isFile }
-            }.map { layout.projectDirectory.file(it.absolutePath) })
+            val prov = getFile(this, fileName)
+            loom.accessWidenerPath.set(prov)
         }
     }
 

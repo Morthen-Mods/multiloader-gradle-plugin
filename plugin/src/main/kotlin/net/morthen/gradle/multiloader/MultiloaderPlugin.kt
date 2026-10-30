@@ -6,7 +6,6 @@ import net.morthen.gradle.multiloader.configurator.comon.CommonConfigurator
 import net.morthen.gradle.multiloader.configurator.datagen.DatagenConfigurator
 import net.morthen.gradle.multiloader.configurator.fabric.FabricConfigurator
 import net.morthen.gradle.multiloader.configurator.forge.ForgeConfigurator
-import net.morthen.gradle.multiloader.configurator.forge.applyForgeGradle
 import net.morthen.gradle.multiloader.configurator.neoforge.NeoforgeConfigurator
 import net.morthen.gradle.multiloader.conventions.applyCompileSettings
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
