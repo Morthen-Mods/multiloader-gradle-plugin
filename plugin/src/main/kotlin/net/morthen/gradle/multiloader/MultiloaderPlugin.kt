@@ -27,6 +27,9 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 //          - implement devLogin for client runs - native in neoforge -- Needs a big disclaimer in README because tokens are not encrypted
 //          - implement ModPublish abstraction
 //          - more to come
+//
+
+// TODO: Biggest TODO is to clean up the code, currently a mess
 
 class MultiloaderPlugin : Plugin<Project> {
     private fun applyCommonPlugins(project: Project) {
@@ -104,7 +107,7 @@ class MultiloaderPlugin : Plugin<Project> {
                 }
 
                 Loader.DATAGEN -> {
-                    if (legacy) applyFabricLoomDatagen(project, ext)
+                    if (legacy) println("No implementation for legacy yet")
                     else applyModDevDatagen(project, ext)
                 }
             }

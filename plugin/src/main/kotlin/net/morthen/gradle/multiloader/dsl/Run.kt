@@ -33,7 +33,10 @@ abstract class Run @Inject constructor(private val name: String): Named {
     }
 
     fun client() = type.set(RunType.CLIENT)
-    fun server() = type.set(RunType.SERVER)
+    fun server() {
+        type.set(RunType.SERVER)
+        programArgs.add("nogui")
+    }
 
     fun runDirectory(name: String) = runDirectory.set(name)
     fun displayName(name: String) = displayName.set(name)
