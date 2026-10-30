@@ -35,6 +35,7 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
     abstract val fabricLoaderVersion: Property<String>
 
     // Configurations / Settings
+    internal var processResourcesProperties: List<Pair<List<String>, Map<String, Any>?>> = mutableListOf()
     internal var testmod: CustomSource? = null
     internal var gametest: CustomSource? = null
     //TODO: implement ModPublish configurations
@@ -66,6 +67,10 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
         forgeVersion.convention(factory.gradleProperty("forge"))
         fabricLoaderVersion.convention(factory.gradleProperty("fabric_loader"))
         fabricApiVersion.convention(factory.gradleProperty("fabric_api"))
+    }
+
+    fun applyMetadataReplacements(pattern: List<String>, properties: Map<String, Any>? = null) {
+        processResourcesProperties += pattern to properties;
     }
 
     fun withTestmod(config: Action<CustomSource>? = null) = with(project) {

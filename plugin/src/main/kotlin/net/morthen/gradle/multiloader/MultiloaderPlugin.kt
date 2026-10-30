@@ -10,6 +10,7 @@ import net.morthen.gradle.multiloader.configurator.neoforge.NeoforgeConfigurator
 import net.morthen.gradle.multiloader.conventions.applyCompileSettings
 import net.morthen.gradle.multiloader.conventions.applyDefaultRepositories
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
+import net.morthen.gradle.multiloader.conventions.applyPlaceholderReplacement
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
 import org.gradle.api.GradleException
@@ -22,8 +23,7 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.get
 import org.gradle.plugins.ide.idea.model.IdeaModel
 
-// TODO:    - Implement placeholder replacement in ProcessResource Task
-//          - Implement Maven Publish
+// TODO:    - Implement Maven Publish
 //          - implement devLogin for client runs - native in neoforge -- Needs a big disclaimer in README because tokens are not encrypted
 //          - implement ModPublish abstraction
 //          - more to come
@@ -58,10 +58,10 @@ class MultiloaderPlugin : Plugin<Project> {
         val settings = project.rootProject.extensions.findByType(MultiloaderSettingsExtension::class.java)
             ?: throw GradleException("Apply 'net.morthen.gradle.multiloader' to the root project as well (project ${project.path})")
 
-        project.applyDefaultRepositories()
-
         val ext = project.extensions.create("multiloader", MultiloaderExtension::class.java)
         ext.settings = settings
+
+        project.applyDefaultRepositories()
 
         // Base Java settings
         val javaExt = project.extensions.getByType(JavaPluginExtension::class.java)
@@ -102,6 +102,9 @@ class MultiloaderPlugin : Plugin<Project> {
                 Loader.NEOFORGE -> NeoforgeConfigurator(project, legacy, ext).init()
                 Loader.DATAGEN -> DatagenConfigurator(project, legacy, ext).init()
             }
+
+            // Apply the custom placeholder replacements to the specified files
+            project.applyPlaceholderReplacement(settings)
 
             // Prevent Testmod and gametest from being published and added as a module to the main source
             val javaComponent = components["java"] as AdhocComponentWithVariants
