@@ -2,33 +2,21 @@ package net.morthen.gradle.multiloader.plugins.fabric
 
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.morthen.gradle.multiloader.api.LoaderPlugin
-import net.morthen.gradle.multiloader.api.MinecraftVersion
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
-import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
 
-class FabricPlugin(private val target: Project, private val ext: MultiloaderExtension): LoaderPlugin {
-    private lateinit var settings: MultiloaderSettingsExtension
+class FabricPlugin(private val target: Project, ext: MultiloaderExtension): LoaderPlugin(ext) {
     private lateinit var loom: LoomGradleExtensionAPI
-    private lateinit var mcVersion: String
-    private lateinit var modId: String
-    private lateinit var implement: String
 
-    private var obfuscated: Boolean = false
+    override fun init() {
+        super.init()
 
-    override fun init() = with(target) {
-        settings = ext.settings
-        mcVersion = settings.minecraftVersion.get()
-        modId = settings.modId.get()
-        obfuscated = MinecraftVersion.isObfuscated(mcVersion)
-        implement = if (obfuscated) "modImplemention" else "implementation"
-
-        pluginManager.apply(FabricLoom.get(obfuscated))
-        loom = the<LoomGradleExtensionAPI>()
+        target.pluginManager.apply(FabricLoom.get(obfuscated))
+        loom = target.the<LoomGradleExtensionAPI>()
 
         applyAccessModifier()
         applyDefaultDependencies()
@@ -39,6 +27,8 @@ class FabricPlugin(private val target: Project, private val ext: MultiloaderExte
     // Apply the default Dependencies for Fabric. Api and Loader have to be set.
     // TODO: Should api and loader be optional?
     private fun applyDefaultDependencies() = with(target) {
+        val implement = if (obfuscated) "modImplementation" else "implementation"
+
         dependencies {
             "minecraft"("com.mojang:minecraft:${ mcVersion }")
             if (obfuscated) "mappings"(loom.officialMojangMappings())
@@ -64,7 +54,8 @@ class FabricPlugin(private val target: Project, private val ext: MultiloaderExte
     }
 
     private fun createRuns() = with(loom) {
-        // Base config on each loader, also prevents the generation of default runs from loom itself
+        // Base config for each run, also prevents the generation of Gradle runs from loom itself,
+        // those get registered through the Runs itself.
         runConfigs.configureEach {
             systemProperties.put("fabric-tag-conventions-v2.missingTagTranslationWarning", "VERBOSE")
             generateRunConfig.set(false)

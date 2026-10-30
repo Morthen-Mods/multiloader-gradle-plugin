@@ -9,6 +9,7 @@ import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 
+// TODO: Rework the run application
 class LoomRunApplier(private val loom: LoomGradleExtensionAPI, private val ext: MultiloaderExtension): RunApplier {
     override fun apply(target: Project, run: Run) {
         val cfg = loom.runConfigs.findByName(run.getName()) ?: loom.runConfigs.create(run.getName())
