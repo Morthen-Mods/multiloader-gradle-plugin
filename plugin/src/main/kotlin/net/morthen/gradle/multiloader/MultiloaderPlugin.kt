@@ -2,15 +2,15 @@ package net.morthen.gradle.multiloader
 
 import net.morthen.gradle.multiloader.api.Loader
 import net.morthen.gradle.multiloader.api.MinecraftVersion
+import net.morthen.gradle.multiloader.configurator.comon.CommonConfigurator
+import net.morthen.gradle.multiloader.configurator.datagen.DatagenConfigurator
+import net.morthen.gradle.multiloader.configurator.fabric.FabricConfigurator
+import net.morthen.gradle.multiloader.configurator.forge.applyForgeGradle
+import net.morthen.gradle.multiloader.configurator.neoforge.NeoforgeConfigurator
 import net.morthen.gradle.multiloader.conventions.applyCompileSettings
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
-import net.morthen.gradle.multiloader.configurator.comon.CommonConfigurator
-import net.morthen.gradle.multiloader.configurator.fabric.FabricConfigurator
-import net.morthen.gradle.multiloader.configurator.forge.applyForgeGradle
-import net.morthen.gradle.multiloader.configurator.neoforge.NeoforgeConfigurator
-import net.morthen.gradle.multiloader.configurator.neoforge.applyModDevDatagen
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -98,10 +98,7 @@ class MultiloaderPlugin : Plugin<Project> {
                 Loader.FABRIC -> FabricConfigurator(project, ext).init()
                 Loader.FORGE -> applyForgeGradle(project, ext)
                 Loader.NEOFORGE -> NeoforgeConfigurator(project, legacy, ext).init()
-                Loader.DATAGEN -> {
-                    if (legacy) println("No implementation for legacy yet")
-                    else applyModDevDatagen(project, ext)
-                }
+                Loader.DATAGEN -> DatagenConfigurator(project, legacy, ext).init()
             }
 
             // Prevent Testmod and gametest from being published and added as a module to the main source
