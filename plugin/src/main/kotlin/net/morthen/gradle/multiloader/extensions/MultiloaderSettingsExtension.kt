@@ -98,7 +98,16 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
     }
 
     fun withGametest(config: Action<CustomSource>? = null) = with(project) {
-        gametest = objects.newInstance(CustomSource::class, this@MultiloaderSettingsExtension, "gametest")
+        val source = objects.newInstance(CustomSource::class, this@MultiloaderSettingsExtension, "gametest")
             .also { config?.execute(it) }
+        gametest = source
+
+        runs.create("gameTests") {
+            gameTestServer()
+            displayName("Gametest Server")
+            runDirectory("server")
+            sourceSetName.set(source.sourceSet.get())
+            loadedMods.addAll(modId.get(), source.modId.get())
+        }
     }
 }

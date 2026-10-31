@@ -46,6 +46,10 @@ class NeoforgeRunApplier(target: Project, ext: MultiloaderExtension, private val
             cfg.programArguments.addAll(datagenArgs(run.datagen))
         }
 
+        if (run.type.get() == RunType.GAMETEST_SERVER) {
+            cfg.systemProperty("neoforge.enableGameTest", "true")
+        }
+
         return NativeRun("run" + run.name.replaceFirstChar { it.uppercase() }, cfg)
     }
 }
