@@ -13,7 +13,7 @@ fun Project.applyMavenPublish(settings: MultiloaderSettingsExtension, loader: St
     the<PublishingExtension>().apply {
         publications {
             register<MavenPublication>("mavenJava") {
-                artifactId = "${ settings.modId.get() }-${ loader }"
+                artifactId = "${ settings.modId.get() }-$loader"
                 from(components["java"])
             }
         }
