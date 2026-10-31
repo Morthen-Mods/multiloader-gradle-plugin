@@ -53,7 +53,7 @@ abstract class RunApplier(protected val target: Project, protected val ext: Mult
 
     // Only NeoForge and Forge need/use this
     protected fun datagenArgs(spec: DatagenSpec): List<String> = buildList {
-        addAll(listOf("--mod", spec.modId.get(), "--all", "--output", spec.outputDirectory.get().asFile.absolutePath))
+        addAll(listOf("--mod", ext.settings.modId.get(), "--all", "--output", spec.outputDirectory.get().asFile.absolutePath))
         spec.existingResources.forEach { addAll(listOf("--existing", it.absolutePath)) }
     }
 }

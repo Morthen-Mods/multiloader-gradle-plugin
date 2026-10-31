@@ -32,7 +32,7 @@ class FabricRunApplier(target: Project, ext: MultiloaderExtension, private val l
             RunType.CLIENT_DATA, RunType.SERVER_DATA -> with(run.datagen) {
                 cfg.systemProperties.put("fabric-api.datagen", "")
                 cfg.systemProperties.put("fabric-api.datagen.output-dir", outputDirectory.get().asFile.absolutePath)
-                cfg.systemProperties.put("fabric-api.datagen.modid", modId.get())
+                cfg.systemProperties.put("fabric-api.datagen.modid", ext.settings.modId.get())
                 if (strictValidation.getOrElse(false)) cfg.systemProperties.put("fabric-api.datagen.strict-validation", "true")
             }
             RunType.GAMETEST_SERVER -> cfg.systemProperties.put("fabric-api.gametest", "")

@@ -21,8 +21,7 @@ enum class RunType(val client: Boolean) {
     CLIENT_GAMETEST(true);   // Only fabric supports Client Gametests
 }
 
-abstract class DatagenSpec {
-    abstract val modId: Property<String>                       // Default: settings.modId
+abstract class DatagenSpec {                // Default: settings.modId
     abstract val outputDirectory: DirectoryProperty
     abstract val existingResources: ConfigurableFileCollection // only Forge/NeoForge (--existing)
     abstract val strictValidation: Property<Boolean>           // only Fabric

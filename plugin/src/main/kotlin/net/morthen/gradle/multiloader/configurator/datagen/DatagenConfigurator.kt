@@ -28,7 +28,7 @@ class DatagenConfigurator(private val target: Project, private val legacy: Boole
         pluginManager.apply(ModDevGradle.PLUGIN_ID)
 
         extensions.configure<NeoForgeExtension> {
-            neoFormVersion = settings.neoformVersion.get()
+            version = ext.settings.neoforgeVersion.get()
 
             applyAccessTransformer(accessTransformers)
             applyInterfaceInjection(interfaceInjectionData)
