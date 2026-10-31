@@ -10,6 +10,7 @@ import net.morthen.gradle.multiloader.configurator.neoforge.NeoforgeConfigurator
 import net.morthen.gradle.multiloader.conventions.applyCompileSettings
 import net.morthen.gradle.multiloader.conventions.applyDefaultRepositories
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
+import net.morthen.gradle.multiloader.conventions.applyMavenPublish
 import net.morthen.gradle.multiloader.conventions.applyPlaceholderReplacement
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
@@ -23,9 +24,8 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.get
 import org.gradle.plugins.ide.idea.model.IdeaModel
 
-// TODO:    - Implement Maven Publish
-//          - implement devLogin for client runs - native in neoforge -- Needs a big disclaimer in README because tokens are not encrypted
-//          - implement ModPublish abstraction
+// TODO:    - implement ModPublish abstraction
+//          - implement ForgeConfigurator
 //          - more to come
 //
 
@@ -86,10 +86,13 @@ class MultiloaderPlugin : Plugin<Project> {
 
         project.afterEvaluate {
             val loader = ext.loader.get()
+            val loaderName = loader.name.lowercase()
             val mc = settings.minecraftVersion.get()
             val legacy = MinecraftVersion.isLegacy(mc)
 
-            applyGradleConvention(loader.name.lowercase())
+            applyGradleConvention(loaderName)
+            applyMavenPublish(settings, loaderName)
+
             if (loader != Loader.COMMON) {
                 applyCompileSettings(project, ext)
             }
