@@ -42,8 +42,6 @@ class NeoforgeRunApplier(target: Project, ext: MultiloaderExtension, private val
         cfg.systemProperties.putAll(run.systemProperties)
         cfg.environment.putAll(run.environment)
 
-//        cfg.devLogin.set(run.devLogin) TODO: implement devLogin
-
         if (run.type.get() in setOf(RunType.CLIENT_DATA, RunType.SERVER_DATA)) {
             cfg.programArguments.addAll(datagenArgs(run.datagen))
         }

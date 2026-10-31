@@ -40,8 +40,6 @@ class FabricRunApplier(target: Project, ext: MultiloaderExtension, private val l
             else -> {}
         }
 
-//        if (run.devLogin.get()) applyDevLogin(cfg) TODO: implement devLogin
-
         return NativeRun(LoomTasks.getRunConfigTaskName(cfg), cfg)
     }
 }

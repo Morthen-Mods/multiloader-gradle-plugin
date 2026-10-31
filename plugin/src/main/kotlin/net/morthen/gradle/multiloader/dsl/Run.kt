@@ -51,7 +51,6 @@ abstract class Run @Inject constructor(private val name: String, objects: Object
 
     // Convenience settings
     abstract val gui: Property<Boolean>         // Is basically always false
-    abstract val devLogin: Property<Boolean>    // Is of by default but can be set inside the MultiloaderSettingsExtension
     abstract val maxHeapSize: Property<String>
 
     val datagen: DatagenSpec = objects.newInstance(DatagenSpec::class.java)
@@ -59,7 +58,6 @@ abstract class Run @Inject constructor(private val name: String, objects: Object
     init {
         sourceSetName.convention("main")
         gui.convention(false)
-        devLogin.convention(false)
     }
 
     // Runtype convenience functions

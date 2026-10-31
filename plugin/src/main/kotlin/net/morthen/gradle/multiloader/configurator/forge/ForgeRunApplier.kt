@@ -45,7 +45,6 @@ class ForgeRunApplier(target: Project, ext: MultiloaderExtension, private val mi
             environment(run.environment)
             if (run.type.get() in setOf(RunType.CLIENT_DATA, RunType.SERVER_DATA)) args(datagenArgs(run.datagen))
         }
-//        if (run.devLogin.get()) applyDevLogin(nested) TODO: implement devLogin
 
         val sourceSet = target.the<JavaPluginExtension>().sourceSets.getByName(sourceSetName)
         return NativeRun(sourceSet.getTaskName("run", loaderType), nested)
