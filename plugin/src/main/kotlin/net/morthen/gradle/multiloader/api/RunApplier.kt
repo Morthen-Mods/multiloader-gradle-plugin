@@ -30,7 +30,6 @@ abstract class RunApplier(protected val target: Project, protected val ext: Mult
             ?: throw GradleException("Run '${run.name}': $type is not supported by $loader on Minecraft $mcVersion. Use onlyOn(...) to restrict it.")
 
         val native = configure(run, loaderType)
-        run.loaderActions[loader]?.forEach { it.execute(native.handle) }
 
         registerGradleRun(target, run, native.taskName)
     }
@@ -52,7 +51,7 @@ abstract class RunApplier(protected val target: Project, protected val ext: Mult
         }
     }
 
-    // Only
+    // Only NeoForge and Forge need/use this
     protected fun datagenArgs(spec: DatagenSpec): List<String> = buildList {
         addAll(listOf("--mod", spec.modId.get(), "--all", "--output", spec.outputDirectory.get().asFile.absolutePath))
         spec.existingResources.forEach { addAll(listOf("--existing", it.absolutePath)) }

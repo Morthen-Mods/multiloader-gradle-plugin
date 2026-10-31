@@ -56,9 +56,6 @@ abstract class Run @Inject constructor(private val name: String, objects: Object
 
     val datagen: DatagenSpec = objects.newInstance(DatagenSpec::class.java)
 
-    // Used for loader specific Actions
-    internal val loaderActions = mutableMapOf<Loader, MutableList<Action<Any>>>()
-
     init {
         sourceSetName.convention("main")
         gui.convention(false)
@@ -80,11 +77,6 @@ abstract class Run @Inject constructor(private val name: String, objects: Object
 
     // register a run for specific loader
     fun onlyOn(vararg loader: Loader) = loaders.addAll(*loader)
-
-    // Set native run objects from the loader
-    fun loader(loader: Loader, action: Action<Any>) {
-        loaderActions.getOrPut(loader) { mutableListOf() } += action
-    }
 
     fun runDirectory(name: String) = runDirectory.set(name)
     fun displayName(name: String) = displayName.set(name)
