@@ -18,6 +18,8 @@ class NeoforgeConfigurator(private val target: Project, private val legacy: Bool
 
         target.pluginManager.apply(ModDevGradle.PLUGIN_ID)
         moddev = target.the<NeoForgeExtension>()
+        moddev.version = ext.settings.neoforgeVersion.get()
+
         applyAccessTransformer()
         applyInterfaceInjection()
         createMods()
@@ -41,21 +43,16 @@ class NeoforgeConfigurator(private val target: Project, private val legacy: Bool
     private fun createMods() = with(moddev) {
         val java = target.the<JavaPluginExtension>()
 
-        runs {
-            mods.create(modId) { sourceSet(java.sourceSets["main"]) }
-            settings.testmod?.let {
-                mods.create(it.modId.get()) { sourceSet(java.sourceSets[it.sourceSet.get()]) }
-            }
-            settings.gametest?.let {
-                mods.create(it.modId.get()) { sourceSet(java.sourceSets[it.sourceSet.get()]) }
-            }
+        mods.create(modId) { sourceSet(java.sourceSets["main"]) }
+        settings.testmod?.let {
+            mods.create(it.modId.get()) { sourceSet(java.sourceSets[it.sourceSet.get()]) }
+        }
+        settings.gametest?.let {
+            mods.create(it.modId.get()) { sourceSet(java.sourceSets[it.sourceSet.get()]) }
         }
     }
 
-    private fun createRuns() = with(moddev) {
-        settings.runs.forEach {
-            // TODO: implement new RunApplier
-            println(it.displayName.get())
-        }
+    private fun createRuns() {
+        settings.runs.forEach { NeoforgeRunApplier(target, ext, moddev).apply(it) }
     }
 }
