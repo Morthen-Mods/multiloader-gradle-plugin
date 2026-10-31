@@ -32,7 +32,12 @@ class NeoforgeRunApplier(target: Project, ext: MultiloaderExtension, private val
 
         run.mainClass.orNull?.let { cfg.mainClass.set(it) }
         cfg.sourceSet.set(target.the<JavaPluginExtension>().sourceSets.named(run.sourceSetName.get()))
-        cfg.loadedMods.set(run.loadedMods.get().map { modDev.mods.getByName(it) })   // set, nicht add
+
+        if (run.loadedMods.get().isEmpty()) {
+            target.logger.error("Loaded mods for run '${run.name}' are empty, set at least the one modId with: loadedMods.add(modId)")
+        } else {
+            cfg.loadedMods.set(run.loadedMods.get().map { modDev.mods.getByName(it) })
+        }
 
         cfg.gameDirectory.set(ext.buildRunDirectory(target, run))
         cfg.programArguments.addAll(run.programArgs)
