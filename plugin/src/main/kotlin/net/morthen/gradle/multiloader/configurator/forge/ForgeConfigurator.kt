@@ -106,6 +106,9 @@ class ForgeConfigurator(private val target: Project, ext: MultiloaderExtension):
         minecraft.runs.maybeCreate("data").with(sourceSet.name) {
             workingDir.set(ext.buildRunDirectory(target, "${sourceSet.name}Data"))
             args("--mod", gametest.modId.get(), "--all", "--output", outputDir.get().asFile.absolutePath)
+
+            // Forge needs mixins as args, same as the runs from the ForgeRunApplier
+            ext.mixins.get().forEach { mixin -> args("--mixin.config=$mixin") }
         }
 
         val dataTask = sourceSet.getTaskName("run", "data")               // runGametestData
