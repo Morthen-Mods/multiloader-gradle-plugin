@@ -22,7 +22,7 @@ source sets, metadata placeholders, Maven publishing and uploads to CurseForge a
 - **One plugin for every subproject.** A single `loader` setting turns a subproject into the
   `common`, `datagen`, `fabric`, `forge` or `neoforge` project.
 - **Shared settings in one place.** Mod info, loader versions, runs, placeholders and publishing
-  are configured once in the root project and read from `gradle.properties` by default.
+  are configured once in the root project and read from `plugin/gradle.properties` by default.
 - **Common code included automatically.** Every loader jar contains the code and resources of
   `common`.
 - **One run DSL for all loaders**, translated to Fabric Loom, ModDevGradle or ForgeGradle and
@@ -99,6 +99,6 @@ The full documentation is in the **[wiki](https://github.com/Morthen-Mods/multil
 
 **Reference**
 - [Minecraft Versions](https://github.com/Morthen-Mods/multiloader-gradle-plugin/wiki/Minecraft-Versions): supported versions and what changes between them
-- [Properties and Environment](https://github.com/Morthen-Mods/multiloader-gradle-plugin/wiki/Properties-and-Environment): every `gradle.properties` entry and environment variable
+- [Properties and Environment](https://github.com/Morthen-Mods/multiloader-gradle-plugin/wiki/Properties-and-Environment): every `plugin/gradle.properties` entry and environment variable
 - [Tasks](https://github.com/Morthen-Mods/multiloader-gradle-plugin/wiki/Tasks): the Gradle tasks per project
 - [Troubleshooting](https://github.com/Morthen-Mods/multiloader-gradle-plugin/wiki/Troubleshooting): error messages and what to do about them
