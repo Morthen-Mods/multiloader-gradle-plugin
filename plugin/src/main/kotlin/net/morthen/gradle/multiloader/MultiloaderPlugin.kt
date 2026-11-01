@@ -54,6 +54,7 @@ class MultiloaderPlugin : Plugin<Project> {
 
         val ext = project.extensions.create("multiloader", MultiloaderExtension::class.java)
         ext.settings = settings
+        ext.modId = settings.modId.get()
 
         project.applyDefaultRepositories()
 

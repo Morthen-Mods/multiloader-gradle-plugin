@@ -38,6 +38,10 @@ class ForgeRunApplier(target: Project, ext: MultiloaderExtension, private val mi
             run.mainClass.orNull?.let { mainClass.set(it) }
             workingDir.set(ext.buildRunDirectory(target, run))
             args(run.programArgs)
+
+            // Forge needs mixins as args
+            ext.mixins.get().forEach { mixin -> args("--mixin.config=$mixin") }
+
             if (!run.type.get().client && !run.gui.get()) args("nogui")
             jvmArgs(run.jvmArgs)
             run.maxHeapSize.orNull?.let { maxHeapSize.set(it) }

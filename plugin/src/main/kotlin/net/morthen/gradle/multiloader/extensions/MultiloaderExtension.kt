@@ -16,6 +16,7 @@ import javax.inject.Inject
 /** Per project configuration via `multiloader { }`. Defaults come from [MultiloaderSettingsExtension]. */
 abstract class MultiloaderExtension @Inject constructor(val project: Project) {
     abstract var settings: MultiloaderSettingsExtension
+    abstract var modId: String
 
     abstract val loader: Property<Loader>
     abstract val mixins: ListProperty<String> // Only needed for Forge

@@ -9,6 +9,7 @@ import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.Copy
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 
 /**
@@ -33,6 +34,7 @@ class ForgeConfigurator(private val target: Project, ext: MultiloaderExtension):
         inheritMainConfigurations()
         settings.gametest?.let { applyGametestData(it) }
 
+        buildManifest()
         createRuns()
     }
 
@@ -69,6 +71,16 @@ class ForgeConfigurator(private val target: Project, ext: MultiloaderExtension):
 
     private fun createRuns() {
         settings.runs.forEach { ForgeRunApplier(target, ext, minecraft).apply(it) }
+    }
+
+    private fun buildManifest() {
+        target.tasks.named<Jar>("jar") {
+            manifest {
+                attributes(mapOf<String, Any>(
+                    "MixinConfig" to ext.mixins.map { it.joinToString(",") }
+                ))
+            }
+        }
     }
 
     private fun inheritMainConfigurations() = with(target) {
