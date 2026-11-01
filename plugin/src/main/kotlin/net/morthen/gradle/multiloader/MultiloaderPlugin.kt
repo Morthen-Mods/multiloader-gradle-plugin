@@ -86,12 +86,11 @@ class MultiloaderPlugin : Plugin<Project> {
 
         project.afterEvaluate {
             val loader = ext.loader.get()
-            val loaderName = loader.name.lowercase()
             val mc = settings.minecraftVersion.get()
             val legacy = MinecraftVersion.isLegacy(mc)
 
-            applyGradleConvention(loaderName)
-            if (loader != Loader.DATAGEN) applyMavenPublish(settings, loaderName)
+            applyGradleConvention(loader.getId())
+            if (loader != Loader.DATAGEN) applyMavenPublish(settings, loader.getId())
             if (loader != Loader.COMMON) applyCompileSettings(project, ext)
 
             when (loader) {
