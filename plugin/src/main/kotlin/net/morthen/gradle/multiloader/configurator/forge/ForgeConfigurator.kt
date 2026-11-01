@@ -77,7 +77,7 @@ class ForgeConfigurator(private val target: Project, ext: MultiloaderExtension):
         target.tasks.named<Jar>("jar") {
             manifest {
                 attributes(mapOf<String, Any>(
-                    "MixinConfig" to ext.mixins.map { it.joinToString(",") }
+                    "MixinConfigs" to ext.mixins.map { it.joinToString(",") }
                 ))
             }
         }
