@@ -2,19 +2,18 @@ package net.morthen.gradle.multiloader.configurator.datagen
 
 import net.morthen.gradle.multiloader.api.LoaderConfigurator
 import net.morthen.gradle.multiloader.configurator.neoforge.ModDevGradle
+import net.morthen.gradle.multiloader.configurator.neoforge.NeoforgeRunApplier
+import net.morthen.gradle.multiloader.dsl.Run
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.neoforged.moddevgradle.dsl.DataFileCollection
 import net.neoforged.moddevgradle.dsl.ModDevExtension
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
 import net.neoforged.moddevgradle.legacyforge.dsl.LegacyForgeExtension
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.create
+import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
-import org.gradle.plugins.ide.idea.model.IdeaModel
-import org.jetbrains.gradle.ext.Gradle
-import org.jetbrains.gradle.ext.runConfigurations
-import org.jetbrains.gradle.ext.settings
 
 class DatagenConfigurator(private val target: Project, private val legacy: Boolean, ext: MultiloaderExtension): LoaderConfigurator(ext) {
     override fun init() {
@@ -33,6 +32,7 @@ class DatagenConfigurator(private val target: Project, private val legacy: Boole
             applyAccessTransformer(accessTransformers)
             applyInterfaceInjection(interfaceInjectionData)
 
+            createMods(this)
             createRuns(this)
         }
     }
@@ -45,6 +45,7 @@ class DatagenConfigurator(private val target: Project, private val legacy: Boole
 
             applyAccessTransformer(accessTransformers)
 
+            createMods(this)
             createRuns(this)
         }
     }
@@ -61,26 +62,25 @@ class DatagenConfigurator(private val target: Project, private val legacy: Boole
         if (regular.isPresent) collection.from(regular.get().asFile.absolutePath)
     }
 
+    // Registers the mod, the data run loads it through loadedMods
+    private fun createMods(moddev: ModDevExtension) = with(target) {
+        moddev.mods.create(modId) { sourceSet(the<JavaPluginExtension>().sourceSets["main"]) }
+    }
+
+    // Uses the Run abstraction, so the NeoForge applier picks the run type for the Minecraft version
+    // (clientData from 1.21.4 on, data before) and registers the IDE run "Datagen Common Data"
     private fun createRuns(moddev: ModDevExtension) = with(target) {
         val commonProject = settings.commonProject.get()
 
-        moddev.runs {
-            register("data") {
-                clientData()
-                disableIdeRun()
-                systemProperty("terminal.ansi", "true")
-                gameDirectory.set(ext.buildRunDirectory(target, "data"))
-                programArguments.set(
-                    listOf("--mod", ext.settings.modId.get(), "--all",
-                        "--output", file("../$commonProject/src/generated").absolutePath,
-                        "--existing", file("../$commonProject/src/main/resources").absolutePath)
-                )
-
-                rootProject.the(IdeaModel::class).project.settings.runConfigurations.create<Gradle>("Common Datagen") {
-                    taskNames = listOf(":${target.name}:runData")
-                    setProject(target)
-                }
-            }
+        val run = objects.newInstance(Run::class.java, "data")
+        run.clientData {
+            outputDirectory.set(file("../$commonProject/src/generated"))
+            existingResources.from(file("../$commonProject/src/main/resources"))
         }
+        run.displayName("Common Data")
+        run.systemProperty("terminal.ansi", "true")
+        run.loadedMods.add(modId)
+
+        NeoforgeRunApplier(target, ext, moddev).apply(run)
     }
 }
