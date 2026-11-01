@@ -11,6 +11,7 @@ import net.morthen.gradle.multiloader.conventions.applyCompileSettings
 import net.morthen.gradle.multiloader.conventions.applyDefaultRepositories
 import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.conventions.applyMavenPublish
+import net.morthen.gradle.multiloader.conventions.applyModPublish
 import net.morthen.gradle.multiloader.conventions.applyPlaceholderReplacement
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
@@ -93,12 +94,18 @@ class MultiloaderPlugin : Plugin<Project> {
             if (loader != Loader.DATAGEN) applyMavenPublish(settings, loader.getId())
             if (loader != Loader.COMMON) applyCompileSettings(project, ext)
 
-            when (loader) {
-                Loader.COMMON -> CommonConfigurator(project, legacy, ext).init()
-                Loader.FABRIC -> FabricConfigurator(project, ext).init()
-                Loader.FORGE -> ForgeConfigurator(project, ext).init()
-                Loader.NEOFORGE -> NeoforgeConfigurator(project, legacy, ext).init()
-                Loader.DATAGEN -> DatagenConfigurator(project, legacy, ext).init()
+            val configurator = when (loader) {
+                Loader.COMMON -> CommonConfigurator(project, legacy, ext)
+                Loader.FABRIC -> FabricConfigurator(project, ext)
+                Loader.FORGE -> ForgeConfigurator(project, ext)
+                Loader.NEOFORGE -> NeoforgeConfigurator(project, legacy, ext)
+                Loader.DATAGEN -> DatagenConfigurator(project, legacy, ext)
+            }
+            configurator.init()
+
+            // Apply ModPublish
+            if (loader != Loader.COMMON && loader != Loader.DATAGEN) {
+                project.applyModPublish(settings, loader, configurator.publishJarTask())
             }
 
             // Apply the custom placeholder replacements to the specified files

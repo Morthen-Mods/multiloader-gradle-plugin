@@ -2,6 +2,7 @@ package net.morthen.gradle.multiloader.extensions
 
 import net.morthen.gradle.multiloader.api.MinecraftVersion
 import net.morthen.gradle.multiloader.dsl.CustomSource
+import net.morthen.gradle.multiloader.dsl.ModPublishSpec
 import net.morthen.gradle.multiloader.dsl.Run
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
@@ -38,7 +39,7 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
     internal var processResourcesProperties: List<Pair<List<String>, Map<String, Any>?>> = mutableListOf()
     internal var testmod: CustomSource? = null
     internal var gametest: CustomSource? = null
-    //TODO: implement ModPublish configurations
+    internal var modPublish: ModPublishSpec? = null
 
     // Run Configurations
     abstract val runs: NamedDomainObjectContainer<Run>
@@ -109,5 +110,10 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
             sourceSetName.set(source.sourceSet.get())
             loadedMods.addAll(modId.get(), source.modId.get())
         }
+    }
+
+    fun withModPublish(config: Action<ModPublishSpec>) = with(project) {
+        val spec = modPublish ?: objects.newInstance(ModPublishSpec::class).also { modPublish = it }
+        config.execute(spec)
     }
 }
