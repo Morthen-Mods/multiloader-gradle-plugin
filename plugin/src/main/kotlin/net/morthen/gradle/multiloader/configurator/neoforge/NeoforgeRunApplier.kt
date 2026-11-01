@@ -14,7 +14,7 @@ import org.gradle.kotlin.dsl.the
 
 class NeoforgeRunApplier(target: Project, ext: MultiloaderExtension, private val modDev: ModDevExtension) : RunApplier(target, ext, Loader.NEOFORGE) {
 
-    private val splitData = !MinecraftVersion.isBefore(mcVersion, "1.21.4")
+    private val splitData = !MinecraftVersion.isBefore(mcVersion, "26.1")
 
     override fun loaderType(type: RunType) = when (type) {
         RunType.CLIENT -> "client"
