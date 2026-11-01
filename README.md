@@ -80,6 +80,44 @@ multiloader {
 }
 ```
 
+## Known issues
+
+> [!WARNING]
+> These are known limitations of the current plugin version and will be fixed in a later version.
+> Until then, use the workarounds below.
+
+### `modImplementation` is unresolved (Fabric below Minecraft 26)
+
+On obfuscated versions (below 26, e.g. 1.21.11) mod dependencies have to go into
+`modImplementation`, `modCompileOnly`, `modRuntimeOnly` & co., so that Loom remaps them. In the
+normal `dependencies { }` block of a `fabric` project this doesn't work:
+
+- `modImplementation(...)` fails with *Unresolved reference 'modImplementation'*,
+- `"modImplementation"(...)` fails because the configuration doesn't exist yet.
+
+The reason: the `loader` is set inside the build script, so the plugin applies Fabric Loom only
+after the script was evaluated. Loom creates the `mod*` configurations when it is applied, so they
+don't exist while the script runs and Gradle generates no accessors for them. For the same reason
+the extensions of the loader plugins (`loom { }`, `neoForge { }`, `minecraft { }`) aren't
+available in the build script.
+
+**Workaround:** add the dependencies in an `afterEvaluate { }` block and write the configuration
+name as a string:
+
+```kts
+afterEvaluate {
+    dependencies {
+        "modImplementation"("com.terraformersmc:modmenu:17.0.1")
+    }
+}
+```
+
+This block runs after the plugin applied Loom and before Loom remaps the mod dependencies.
+
+Don't use `implementation` instead: mod jars for obfuscated versions have to be remapped by Loom.
+From Minecraft 26.1 on there is nothing to remap, and plain `implementation` works without the
+workaround.
+
 ## Documentation
 
 The full documentation is in the **[wiki](https://github.com/Morthen-Mods/multiloader-gradle-plugin/wiki)**.
