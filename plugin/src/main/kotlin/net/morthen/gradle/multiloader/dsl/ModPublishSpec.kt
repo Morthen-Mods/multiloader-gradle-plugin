@@ -52,7 +52,7 @@ abstract class CurseforgeSpec @Inject constructor(providers: ProviderFactory) {
 
     init {
         projectId.convention(providers.gradleProperty("curseforge_id"))
-        accessToken.convention(providers.environmentVariable("CURSEFORGE_TOKEN"))
+        accessToken.convention(providers.environmentVariable("CURSEFORGE_API"))
     }
 }
 
@@ -63,7 +63,7 @@ abstract class ModrinthSpec @Inject constructor(providers: ProviderFactory) {
 
     init {
         projectId.convention(providers.gradleProperty("modrinth_id"))
-        accessToken.convention(providers.environmentVariable("MODRINTH_TOKEN"))
+        accessToken.convention(providers.environmentVariable("MODRINTH_API"))
         featured.convention(false)
     }
 }
