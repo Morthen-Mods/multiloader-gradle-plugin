@@ -71,4 +71,6 @@ class FabricConfigurator(private val target: Project, ext: MultiloaderExtension)
             }
         }
     }
+
+    override fun publishJarTask(): String = if (obfuscated) "remapJar" else "jar"
 }

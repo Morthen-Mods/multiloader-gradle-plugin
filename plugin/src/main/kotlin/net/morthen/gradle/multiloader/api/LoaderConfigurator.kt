@@ -33,4 +33,6 @@ abstract class LoaderConfigurator(protected val ext: MultiloaderExtension) {
                 .firstOrNull { it.isFile }
         }.map { layout.projectDirectory.file(it.absolutePath) }
     }
+
+    open fun publishJarTask(): String = "jar"
 }
