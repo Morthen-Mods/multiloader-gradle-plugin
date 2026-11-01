@@ -25,13 +25,6 @@ import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.get
 import org.gradle.plugins.ide.idea.model.IdeaModel
 
-// TODO:    - implement ModPublish abstraction
-//          - implement ForgeConfigurator
-//          - more to come
-//
-
-// TODO: Biggest TODO is to clean up the code, currently a mess
-
 class MultiloaderPlugin : Plugin<Project> {
     private fun applyCommonPlugins(project: Project) {
         project.pluginManager.apply("java-library")
