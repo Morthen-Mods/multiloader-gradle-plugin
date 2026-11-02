@@ -9,6 +9,9 @@ import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.the
+import java.util.Locale
+import java.util.Locale.getDefault
 
 class CommonConfigurator(private val target: Project, private val legacy: Boolean, ext: MultiloaderExtension): LoaderConfigurator(ext) {
 
@@ -40,17 +43,22 @@ class CommonConfigurator(private val target: Project, private val legacy: Boolea
         }
     }
 
+    // This should now configure all outgoing common sourcesets correctly
     private fun outgoingConfig() = with(target) {
         afterEvaluate {
-            val commonJava = configurations.consumable("commonJava")
-            val commonResources = configurations.consumable("commonResources")
+            val java = the<JavaPluginExtension>()
+            java.sourceSets["main"].resources.srcDir("src/generated")
 
-            extensions.configure<JavaPluginExtension> {
-                sourceSets["main"].resources.srcDir("src/generated")
+            listOfNotNull("main", settings.testmod?.sourceSet?.get(), settings.gametest?.sourceSet?.get()).forEach { name ->
+                val sourceSet = java.sourceSets[name]
+                val prefix = if (name == "main") "common" else "common" + name.replaceFirstChar { it.uppercase() }
+
+                val javaOut = configurations.consumable("${prefix}Java")
+                val resOut = configurations.consumable("${prefix}Resources")
 
                 artifacts {
-                    sourceSets["main"].java.sourceDirectories.forEach { add(commonJava.name, it) }
-                    sourceSets["main"].resources.sourceDirectories.forEach { add(commonResources.name, it) }
+                    sourceSet.java.sourceDirectories.forEach { add(javaOut.name, it) }
+                    sourceSet.resources.sourceDirectories.forEach { add(resOut.name, it) }
                 }
             }
         }

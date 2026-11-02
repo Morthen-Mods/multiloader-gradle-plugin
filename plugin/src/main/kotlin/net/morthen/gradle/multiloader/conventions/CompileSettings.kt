@@ -53,13 +53,35 @@ fun applyCompileSettings(target: Project, ext: MultiloaderExtension) = with(targ
         // make common
         fun configureDependencies(sourceSetName: String) {
             val sourceSet = the<JavaPluginExtension>().sourceSets[sourceSetName]
-            sourceSet.java.srcDir(target.project(commonProject).file("src/$sourceSetName/java"))
-            sourceSet.resources.srcDir(target.project(commonProject).file("src/$sourceSetName/resources"))
+            val cap = sourceSetName.replaceFirstChar { it.uppercase() }
 
             dependencies {
-                "${sourceSetName}CompileOnly"(project(commonProject)) {
+                sourceSet.compileOnlyConfigurationName(project(commonProject)) {
                     attributes { attribute(loaderAttribute, "common") }
                 }
+                sourceSet.compileOnlyConfigurationName(project(commonProject)) {
+                    capabilities { requireFeature(sourceSetName) }
+                    attributes { attribute(loaderAttribute, "common") }
+                }
+            }
+
+            val javaDep = configurations.dependencyScope("common${cap}JavaDep")
+            val javaSrc = configurations.resolvable("common${cap}Java") { extendsFrom(javaDep) }
+            val resDep = configurations.dependencyScope("common${cap}ResourcesDep")
+            val resSrc = configurations.resolvable("common${cap}Resources") { extendsFrom(resDep) }
+
+            dependencies {
+                javaDep(project(commonProject, "common${cap}Java"))
+                resDep(project(commonProject, "common${cap}Resources"))
+            }
+
+            tasks.named<JavaCompile>(sourceSet.compileJavaTaskName) {
+                dependsOn(javaSrc)
+                source(javaSrc)
+            }
+            tasks.named<ProcessResources>(sourceSet.processResourcesTaskName) {
+                dependsOn(resSrc)
+                from(resSrc)
             }
         }
 
