@@ -37,6 +37,7 @@ class DatagenConfigurator(private val target: Project, private val legacy: Boole
         }
     }
 
+    // TODO: this does not apply any loader, so datagen wont work
     private fun initLegacy() = with(target) {
         pluginManager.apply(ModDevGradle.PLUGIN_LEGACY_ID)
 
