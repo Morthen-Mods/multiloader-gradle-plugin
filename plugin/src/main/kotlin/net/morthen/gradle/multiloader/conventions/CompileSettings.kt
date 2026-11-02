@@ -9,6 +9,7 @@ import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.kotlin.dsl.*
 import org.gradle.language.jvm.tasks.ProcessResources
 
+//TODO: make configureDependencies usable for all sourceSets to reduce duplicate code
 fun applyCompileSettings(target: Project, ext: MultiloaderExtension) = with(target) {
     val commonProject = ":${ ext.settings.commonProject.get() }"
 
@@ -50,7 +51,7 @@ fun applyCompileSettings(target: Project, ext: MultiloaderExtension) = with(targ
             from(commonJava, commonResources)
         }
 
-        // make common
+        // configure the common sourceSets
         fun configureDependencies(sourceSetName: String) {
             val sourceSet = the<JavaPluginExtension>().sourceSets[sourceSetName]
             val cap = sourceSetName.replaceFirstChar { it.uppercase() }
