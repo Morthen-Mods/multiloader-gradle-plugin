@@ -15,6 +15,9 @@ object MinecraftVersion {
     // True if mcVersion is strictly older than checkVersion ("1.21.3" before "1.21.4" -> true, "1.21.4" before "1.21.4" -> false).
     fun isBefore(mcVersion: String, checkVersion: String): Boolean = compare(mcVersion, checkVersion) < 0
 
+    // True if mcVersion is strictly newer than checkVersion ("1.21.5" after "1.21.4" -> true, "1.21.4" after "1.21.4" -> false).
+    fun isAfter(mcVersion: String, checkVersion: String): Boolean = compare(mcVersion, checkVersion) > 0
+
     fun checkSupport(version: String) {
         if (!RELEASE.matches(version)) {
             throw GradleException("'$version' is not a release version. Snapshots, pre-release and release candidates are not supported.")

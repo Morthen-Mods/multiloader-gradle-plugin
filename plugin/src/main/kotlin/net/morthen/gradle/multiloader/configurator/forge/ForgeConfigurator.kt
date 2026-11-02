@@ -4,6 +4,7 @@ import net.minecraftforge.gradle.ForgeGradleExtension
 import net.minecraftforge.gradle.MinecraftExtension
 import net.minecraftforge.gradle.MinecraftExtensionForProject
 import net.morthen.gradle.multiloader.api.LoaderConfigurator
+import net.morthen.gradle.multiloader.api.MinecraftVersion
 import net.morthen.gradle.multiloader.dsl.CustomSource
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.Project
@@ -32,7 +33,13 @@ class ForgeConfigurator(private val target: Project, ext: MultiloaderExtension):
 
         // This implementation is based on Claude Opus, wasn't tempted enough to deal with Forge that much
         inheritMainConfigurations()
-        settings.gametest?.let { applyGametestData(it) }
+        settings.gametest?.let {
+            // The full Gametest framework is only available for 1.21.5 and ongoing, with that the gameTestServer needs the runData task.
+            // Every version below 1.21.5 uses the GameTestGenerator annotation from the vanilla framework
+            if (MinecraftVersion.isAfter(ext.settings.minecraftVersion.get(), "1.21.4")) {
+                applyGametestData(it)
+            }
+        }
 
         buildManifest()
         createRuns()
