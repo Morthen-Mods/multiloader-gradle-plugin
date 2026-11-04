@@ -15,6 +15,7 @@ abstract class LoaderConfigurator(protected val ext: MultiloaderExtension) {
     protected lateinit var modId: String
 
     protected var obfuscated: Boolean = false
+    protected var isLegacy: Boolean = false
 
     open fun init() {
         settings = ext.settings
@@ -22,6 +23,7 @@ abstract class LoaderConfigurator(protected val ext: MultiloaderExtension) {
         modId = settings.modId.get()
 
         obfuscated = MinecraftVersion.isObfuscated(mcVersion)
+        isLegacy = MinecraftVersion.isLegacy(mcVersion)
     }
 
     fun getFile(target: Project, fileName: String): Provider<RegularFile> = with(target) {

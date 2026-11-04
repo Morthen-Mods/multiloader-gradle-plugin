@@ -9,12 +9,12 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
 
-class NeoforgeConfigurator(private val target: Project, private val legacy: Boolean, ext: MultiloaderExtension): LoaderConfigurator(ext) {
+class NeoforgeConfigurator(private val target: Project, ext: MultiloaderExtension): LoaderConfigurator(ext) {
     private lateinit var moddev: NeoForgeExtension
 
     override fun init() {
         super.init()
-        if (legacy) throw GradleException("NeoForge does not support Minecraft $mcVersion")
+        if (isLegacy) throw GradleException("NeoForge does not support Minecraft $mcVersion")
 
         target.pluginManager.apply(ModDevGradle.PLUGIN_ID)
         moddev = target.the<NeoForgeExtension>()

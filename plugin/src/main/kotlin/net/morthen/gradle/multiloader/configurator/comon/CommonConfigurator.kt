@@ -13,12 +13,12 @@ import org.gradle.kotlin.dsl.the
 import java.util.Locale
 import java.util.Locale.getDefault
 
-class CommonConfigurator(private val target: Project, private val legacy: Boolean, ext: MultiloaderExtension): LoaderConfigurator(ext) {
+class CommonConfigurator(private val target: Project, ext: MultiloaderExtension): LoaderConfigurator(ext) {
 
     override fun init() {
         super.init()
 
-        if (legacy) initLegacy()
+        if (isLegacy) initLegacy()
         else initModern()
 
         outgoingConfig()

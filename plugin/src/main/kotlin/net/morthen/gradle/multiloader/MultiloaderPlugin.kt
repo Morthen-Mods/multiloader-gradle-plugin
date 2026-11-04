@@ -82,18 +82,17 @@ class MultiloaderPlugin : Plugin<Project> {
         project.afterEvaluate {
             val loader = ext.loader.get()
             val mc = settings.minecraftVersion.get()
-            val legacy = MinecraftVersion.isLegacy(mc)
 
             applyGradleConvention(loader.getId())
             if (loader != Loader.DATAGEN) applyMavenPublish(settings, loader.getId())
             if (loader != Loader.COMMON) applyCompileSettings(project, ext)
 
             val configurator = when (loader) {
-                Loader.COMMON -> CommonConfigurator(project, legacy, ext)
+                Loader.COMMON -> CommonConfigurator(project, ext)
                 Loader.FABRIC -> FabricConfigurator(project, ext)
                 Loader.FORGE -> ForgeConfigurator(project, ext)
-                Loader.NEOFORGE -> NeoforgeConfigurator(project, legacy, ext)
-                Loader.DATAGEN -> DatagenConfigurator(project, legacy, ext)
+                Loader.NEOFORGE -> NeoforgeConfigurator(project, ext)
+                Loader.DATAGEN -> DatagenConfigurator(project, ext)
             }
             configurator.init()
 

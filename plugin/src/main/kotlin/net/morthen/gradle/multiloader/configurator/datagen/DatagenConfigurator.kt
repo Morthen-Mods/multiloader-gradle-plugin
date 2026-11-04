@@ -16,11 +16,11 @@ import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
 
 // TODO: add Datagen type to use fabric or neo/-forge as common datagen
-class DatagenConfigurator(private val target: Project, private val legacy: Boolean, ext: MultiloaderExtension): LoaderConfigurator(ext) {
+class DatagenConfigurator(private val target: Project, ext: MultiloaderExtension): LoaderConfigurator(ext) {
     override fun init() {
         super.init()
 
-        if (legacy) initLegacy()
+        if (isLegacy) initLegacy()
         else initModern()
     }
 
