@@ -58,7 +58,6 @@ class FabricConfigurator(private val target: Project, ext: MultiloaderExtension)
     }
 
     // Creates all available mods, currently only 3 possible
-    // TODO: Elaborate if more custom sources are reasonable, they should be then registered in a list
     private fun createMods() = with(loom) {
         mods {
             create(modId) { sourceSet("main") }

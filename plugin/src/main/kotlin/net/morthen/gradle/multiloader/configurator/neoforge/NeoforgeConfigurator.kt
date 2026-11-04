@@ -38,8 +38,7 @@ class NeoforgeConfigurator(private val target: Project, ext: MultiloaderExtensio
         if (regular.isPresent) interfaceInjectionData.from(regular.get().asFile.absolutePath)
     }
 
-    // Creates all available mods, currently only 3 possible
-    // TODO: Elaborate if more custom sources are reasonable, they should be then registered in a list
+    // Creates all available mods
     private fun createMods() = with(moddev) {
         val java = target.the<JavaPluginExtension>()
 
