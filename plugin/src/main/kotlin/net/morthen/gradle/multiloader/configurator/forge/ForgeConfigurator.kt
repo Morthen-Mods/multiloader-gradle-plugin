@@ -6,25 +6,18 @@ import net.minecraftforge.gradle.MinecraftExtensionForProject
 import net.morthen.gradle.multiloader.api.LoaderConfigurator
 import net.morthen.gradle.multiloader.api.MinecraftVersion
 import net.morthen.gradle.multiloader.dsl.CustomSource
+import net.morthen.gradle.multiloader.dsl.Run
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.SourceSet
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
-
-// TODO: legacy versions of forge need a specific mods create application like neoforge, after 1.20.1 forge does this automatically
-// if (MinecraftVersion.isLegacy(mcVersion)) {
-//    mods {
-//        create(modId) { source(sourceSets["main"]) }
-//        create(testmodId) { source(sourceSets[run.sourceSetName.get()]) }
-//    }
-//}
-
-
+import java.io.File
 
 /**
- * ForgeConfigurator implementation is 50% based on Claude Opus 5.5, since ForgeGradle is a little headache to implement
+ * ForgeConfigurator implementation is 50% based on Claude Opus 5.5, since ForgeGradle is a headache to implement
  */
 class ForgeConfigurator(private val target: Project, ext: MultiloaderExtension): LoaderConfigurator(ext) {
     private lateinit var minecraft: MinecraftExtensionForProject
@@ -87,7 +80,29 @@ class ForgeConfigurator(private val target: Project, ext: MultiloaderExtension):
     }
 
     private fun createRuns() {
-        settings.runs.forEach { ForgeRunApplier(target, ext, minecraft).apply(it) }
+        settings.runs.forEach {
+            if (isLegacy) modifyRun(it)
+            ForgeRunApplier(target, ext, minecraft).apply(it)
+        }
+    }
+
+    private fun modifyRun(run: Run) {
+        settings.testmod?.let { cfg -> setEnv(run, cfg) }
+        settings.gametest?.let { cfg -> setEnv(run, cfg) }
+    }
+
+    /**
+     * The modification of the MOD_CLASSES env is necessary for versions below 1.20.2
+     * Forge does not automatically use all sourceSets.
+     */
+    private fun setEnv(run: Run, cfg: CustomSource) {
+        val buildDir = target.layout.buildDirectory.dir("sourcesSets")
+        val main = buildDir.get().dir(SourceSet.MAIN_SOURCE_SET_NAME).asFile.absolutePath
+
+        if (run.name.startsWith(cfg.sourceSet.get())) {
+            val source = buildDir.get().dir(cfg.sourceSet.get()).asFile.absolutePath
+            run.environment("MOD_CLASSES", listOf("$modId%%$main", "${cfg.modId.get()}%%$source").joinToString(File.pathSeparator))
+        }
     }
 
     private fun buildManifest() {

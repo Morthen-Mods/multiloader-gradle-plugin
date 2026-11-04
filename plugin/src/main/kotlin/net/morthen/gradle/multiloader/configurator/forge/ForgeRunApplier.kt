@@ -20,7 +20,7 @@ class ForgeRunApplier(target: Project, ext: MultiloaderExtension, private val mi
     override fun loaderType(type: RunType) = when (type) {
         RunType.CLIENT -> "client"
         RunType.SERVER -> "server"
-        RunType.CLIENT_DATA, RunType.SERVER_DATA -> "data" // Forge only knows data
+        RunType.CLIENT_DATA, RunType.SERVER_DATA -> "data"
         RunType.GAMETEST_SERVER -> "gameTestServer"
         RunType.CLIENT_GAMETEST -> null
     }
@@ -33,6 +33,7 @@ class ForgeRunApplier(target: Project, ext: MultiloaderExtension, private val mi
 
         val base = minecraft.runs.maybeCreate(loaderType)
         lateinit var nested: SlimeLauncherOptionsNested
+
         base.with(sourceSetName) {
             nested = this
             run.mainClass.orNull?.let { mainClass.set(it) }
