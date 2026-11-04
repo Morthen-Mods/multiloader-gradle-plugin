@@ -13,6 +13,16 @@ import org.gradle.api.tasks.Copy
 import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.*
 
+// TODO: legacy versions of forge need a specific mods create application like neoforge, after 1.20.1 forge does this automatically
+// if (MinecraftVersion.isLegacy(mcVersion)) {
+//    mods {
+//        create(modId) { source(sourceSets["main"]) }
+//        create(testmodId) { source(sourceSets[run.sourceSetName.get()]) }
+//    }
+//}
+
+
+
 /**
  * ForgeConfigurator implementation is 50% based on Claude Opus 5.5, since ForgeGradle is a little headache to implement
  */
