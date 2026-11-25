@@ -63,11 +63,11 @@ abstract class MultiloaderSettingsExtension @Inject constructor(objects: ObjectF
         modDescription.convention(factory.gradleProperty("mod_description"))
 
         // Mod Loader
-        neoformVersion.convention(factory.gradleProperty("neoform"))
-        neoforgeVersion.convention(factory.gradleProperty("neoforge"))
-        forgeVersion.convention(factory.gradleProperty("forge"))
-        fabricLoaderVersion.convention(factory.gradleProperty("fabric_loader"))
-        fabricApiVersion.convention(factory.gradleProperty("fabric_api"))
+        neoformVersion.convention(factory.gradleProperty("neoform").orElse(""))
+        neoforgeVersion.convention(factory.gradleProperty("neoforge").orElse(""))
+        forgeVersion.convention(factory.gradleProperty("forge").orElse(""))
+        fabricLoaderVersion.convention(factory.gradleProperty("fabric_loader").orElse(""))
+        fabricApiVersion.convention(factory.gradleProperty("fabric_api").orElse(""))
     }
 
     fun applyMetadataReplacements(pattern: List<String>, properties: Map<String, Any>? = null) {
