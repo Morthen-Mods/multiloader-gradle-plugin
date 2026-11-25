@@ -7,13 +7,7 @@ import net.morthen.gradle.multiloader.configurator.datagen.DatagenConfigurator
 import net.morthen.gradle.multiloader.configurator.fabric.FabricConfigurator
 import net.morthen.gradle.multiloader.configurator.forge.ForgeConfigurator
 import net.morthen.gradle.multiloader.configurator.neoforge.NeoforgeConfigurator
-import net.morthen.gradle.multiloader.conventions.applyCompileSettings
-import net.morthen.gradle.multiloader.conventions.applyDefaultRepositories
-import net.morthen.gradle.multiloader.conventions.applyGradleConvention
-import net.morthen.gradle.multiloader.conventions.applyMavenPublish
-import net.morthen.gradle.multiloader.conventions.applyModPublish
-import net.morthen.gradle.multiloader.conventions.applyPlaceholderReplacement
-import net.morthen.gradle.multiloader.conventions.registerMultiConfigurations
+import net.morthen.gradle.multiloader.conventions.*
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
 import org.gradle.api.GradleException
