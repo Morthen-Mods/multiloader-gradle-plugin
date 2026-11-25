@@ -2,6 +2,7 @@ package net.morthen.gradle.multiloader.configurator.fabric
 
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 import net.morthen.gradle.multiloader.api.LoaderConfigurator
+import net.morthen.gradle.multiloader.conventions.connectMultiConfiguration
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
@@ -14,6 +15,8 @@ class FabricConfigurator(private val target: Project, ext: MultiloaderExtension)
         super.init()
 
         target.pluginManager.apply(FabricLoom.get(obfuscated))
+        target.connectMultiConfiguration(remap = obfuscated)
+
         loom = target.the<LoomGradleExtensionAPI>()
 
         applyAccessModifier()

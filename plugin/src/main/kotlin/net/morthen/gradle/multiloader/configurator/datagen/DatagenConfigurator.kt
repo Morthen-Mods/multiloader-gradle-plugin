@@ -3,6 +3,7 @@ package net.morthen.gradle.multiloader.configurator.datagen
 import net.morthen.gradle.multiloader.api.LoaderConfigurator
 import net.morthen.gradle.multiloader.configurator.neoforge.ModDevGradle
 import net.morthen.gradle.multiloader.configurator.neoforge.NeoforgeRunApplier
+import net.morthen.gradle.multiloader.conventions.connectMultiConfiguration
 import net.morthen.gradle.multiloader.dsl.Run
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.neoforged.moddevgradle.dsl.DataFileCollection
@@ -26,6 +27,7 @@ class DatagenConfigurator(private val target: Project, ext: MultiloaderExtension
 
     private fun initModern() = with(target) {
         pluginManager.apply(ModDevGradle.PLUGIN_ID)
+        connectMultiConfiguration(remap = false)
 
         extensions.configure<NeoForgeExtension> {
             version = ext.settings.neoforgeVersion.get()
@@ -50,6 +52,8 @@ class DatagenConfigurator(private val target: Project, ext: MultiloaderExtension
             createMods(this)
             createRuns(this)
         }
+
+        connectMultiConfiguration(remap = true, copy = true)
     }
 
     // Applies accesstransformer.cfg from the common project, the file from the project path itself get applied by default

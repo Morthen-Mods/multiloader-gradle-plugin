@@ -1,6 +1,7 @@
 package net.morthen.gradle.multiloader.configurator.neoforge
 
 import net.morthen.gradle.multiloader.api.LoaderConfigurator
+import net.morthen.gradle.multiloader.conventions.connectMultiConfiguration
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
 import org.gradle.api.GradleException
@@ -17,6 +18,8 @@ class NeoforgeConfigurator(private val target: Project, ext: MultiloaderExtensio
         if (isLegacy) throw GradleException("NeoForge does not support Minecraft $mcVersion")
 
         target.pluginManager.apply(ModDevGradle.PLUGIN_ID)
+        target.connectMultiConfiguration(remap = false)
+
         moddev = target.the<NeoForgeExtension>()
         moddev.version = ext.settings.neoforgeVersion.get()
 

@@ -1,8 +1,9 @@
 package net.morthen.gradle.multiloader.configurator.comon
 
 import net.morthen.gradle.multiloader.api.LoaderConfigurator
-import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.configurator.neoforge.ModDevGradle
+import net.morthen.gradle.multiloader.conventions.connectMultiConfiguration
+import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.neoforged.moddevgradle.dsl.NeoForgeExtension
 import net.neoforged.moddevgradle.legacyforge.dsl.LegacyForgeExtension
 import org.gradle.api.Project
@@ -10,8 +11,6 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.get
 import org.gradle.kotlin.dsl.the
-import java.util.Locale
-import java.util.Locale.getDefault
 
 class CommonConfigurator(private val target: Project, ext: MultiloaderExtension): LoaderConfigurator(ext) {
 
@@ -26,6 +25,7 @@ class CommonConfigurator(private val target: Project, ext: MultiloaderExtension)
 
     private fun initModern() = with(target) {
         pluginManager.apply(ModDevGradle.PLUGIN_ID)
+        connectMultiConfiguration(remap = false)
 
         extensions.configure<NeoForgeExtension> {
             neoFormVersion = settings.neoformVersion.get()
@@ -41,6 +41,8 @@ class CommonConfigurator(private val target: Project, ext: MultiloaderExtension)
         extensions.configure<LegacyForgeExtension> {
             mcpVersion = mcVersion
         }
+
+        connectMultiConfiguration(remap = true, copy = true)
     }
 
     // This should now configure all outgoing common sourcesets correctly

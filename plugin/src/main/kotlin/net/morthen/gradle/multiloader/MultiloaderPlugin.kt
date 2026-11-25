@@ -13,6 +13,7 @@ import net.morthen.gradle.multiloader.conventions.applyGradleConvention
 import net.morthen.gradle.multiloader.conventions.applyMavenPublish
 import net.morthen.gradle.multiloader.conventions.applyModPublish
 import net.morthen.gradle.multiloader.conventions.applyPlaceholderReplacement
+import net.morthen.gradle.multiloader.conventions.registerMultiConfigurations
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
 import net.morthen.gradle.multiloader.extensions.MultiloaderSettingsExtension
 import org.gradle.api.GradleException
@@ -78,6 +79,9 @@ class MultiloaderPlugin : Plugin<Project> {
 
         // Register CustomSource container
         ext.registerAdditionalSourceSets()
+
+        // register multi* dependency extension
+        project.registerMultiConfigurations()
 
         project.afterEvaluate {
             val loader = ext.loader.get()

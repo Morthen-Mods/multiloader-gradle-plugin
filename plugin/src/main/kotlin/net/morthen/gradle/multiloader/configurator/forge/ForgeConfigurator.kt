@@ -5,6 +5,7 @@ import net.minecraftforge.gradle.MinecraftExtension
 import net.minecraftforge.gradle.MinecraftExtensionForProject
 import net.morthen.gradle.multiloader.api.LoaderConfigurator
 import net.morthen.gradle.multiloader.api.MinecraftVersion
+import net.morthen.gradle.multiloader.conventions.connectMultiConfiguration
 import net.morthen.gradle.multiloader.dsl.CustomSource
 import net.morthen.gradle.multiloader.dsl.Run
 import net.morthen.gradle.multiloader.extensions.MultiloaderExtension
@@ -27,6 +28,8 @@ class ForgeConfigurator(private val target: Project, ext: MultiloaderExtension):
         super.init()
 
         target.pluginManager.apply(ForgeGradle.PLUGIN_ID)
+        target.connectMultiConfiguration(remap = false)
+
         minecraft = target.the<MinecraftExtensionForProject>()
         java = target.the<JavaPluginExtension>()
 
