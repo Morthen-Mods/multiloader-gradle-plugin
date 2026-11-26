@@ -27,6 +27,9 @@ source sets, metadata placeholders, Maven publishing and uploads to CurseForge a
   `common`.
 - **One run DSL for all loaders**, translated to Fabric Loom, ModDevGradle or ForgeGradle and
   registered as IntelliJ IDEA run configurations.
+- **Dependencies that work on every version.** The `multi*` configurations (`multiImplementation`
+  & co.) end up in `modImplementation` & co. where mod jars have to be remapped, and in the plain
+  configurations otherwise.
 - **Extras:** test mod and game test source sets, metadata placeholders, access transformers,
   access wideners and class tweakers, interface injection, and data generation into `common`.
 - **Publishing:** Maven publications for `common` and every loader, and uploads to CurseForge and
@@ -78,45 +81,33 @@ plugins {
 multiloader {
     loader = Loader.FABRIC
 }
-```
 
-## Known issues
-
-> [!WARNING]
-> These are known limitations of the current plugin version and will be fixed in a later version.
-> Until then, use the workarounds below.
-
-### `modImplementation` is unresolved (Fabric below Minecraft 26)
-
-On obfuscated versions (below 26, e.g. 1.21.11) mod dependencies have to go into
-`modImplementation`, `modCompileOnly`, `modRuntimeOnly` & co., so that Loom remaps them. In the
-normal `dependencies { }` block of a `fabric` project this doesn't work:
-
-- `modImplementation(...)` fails with *Unresolved reference 'modImplementation'*,
-- `"modImplementation"(...)` fails because the configuration doesn't exist yet.
-
-The reason: the `loader` is set inside the build script, so the plugin applies Fabric Loom only
-after the script was evaluated. Loom creates the `mod*` configurations when it is applied, so they
-don't exist while the script runs and Gradle generates no accessors for them. For the same reason
-the extensions of the loader plugins (`loom { }`, `neoForge { }`, `minecraft { }`) aren't
-available in the build script.
-
-**Workaround:** add the dependencies in an `afterEvaluate { }` block and write the configuration
-name as a string:
-
-```kts
-afterEvaluate {
-    dependencies {
-        "modImplementation"("com.terraformersmc:modmenu:17.0.1")
-    }
+dependencies {
+    multiImplementation("com.terraformersmc:modmenu:17.0.1")
 }
 ```
 
-This block runs after the plugin applied Loom and before Loom remaps the mod dependencies.
+## Dependencies
 
-Don't use `implementation` instead: mod jars for obfuscated versions have to be remapped by Loom.
-From Minecraft 26.1 on there is nothing to remap, and plain `implementation` works without the
-workaround.
+Declare mod dependencies with the plugin's `multi*` configurations instead of `implementation` or
+`modImplementation`:
+
+| Configuration          | Without remapping | With remapping      |
+|------------------------|-------------------|---------------------|
+| `multiApi`             | `api`             | `modApi`            |
+| `multiImplementation`  | `implementation`  | `modImplementation` |
+| `multiCompileOnly`     | `compileOnly`     | `modCompileOnly`    |
+| `multiCompileOnlyApi`  | `compileOnlyApi`  | `modCompileOnlyApi` |
+| `multiRuntimeOnly`     | `runtimeOnly`     | `modRuntimeOnly`    |
+
+Remapping applies to Fabric below Minecraft 26 and to `common`/`datagen` on 1.20.1 (ModDevGradle
+Legacy). Everywhere else the dependencies go into the plain configurations.
+
+The plugin applies the loader toolchains only after the build script was evaluated, so Loom's and
+ModDevGradle's `mod*` configurations don't exist yet in the `dependencies { }` block. The `multi*`
+configurations do, because the plugin registers them as soon as it is applied. See
+[Dependencies](https://github.com/Morthen-Mods/multiloader-gradle-plugin/wiki/Dependencies) in
+the wiki for details.
 
 ## Documentation
 
@@ -128,6 +119,7 @@ The full documentation is in the **[wiki](https://github.com/Morthen-Mods/multil
 - [Project Types](https://github.com/Morthen-Mods/multiloader-gradle-plugin/wiki/Project-Types): what the plugin does in each subproject
 
 **Features**
+- [Dependencies](https://github.com/Morthen-Mods/multiloader-gradle-plugin/wiki/Dependencies): the `multi*` dependency configurations
 - [Runs](https://github.com/Morthen-Mods/multiloader-gradle-plugin/wiki/Runs): the shared run DSL
 - [Testmod and Gametest](https://github.com/Morthen-Mods/multiloader-gradle-plugin/wiki/Testmod-and-Gametest): extra source sets for a test mod and game tests
 - [Metadata Placeholders](https://github.com/Morthen-Mods/multiloader-gradle-plugin/wiki/Metadata-Placeholders): `${mod_id}`, `${version}` & co. in metadata files
